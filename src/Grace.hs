@@ -35,6 +35,7 @@ import qualified Grace.Normalize as Normalize
 import qualified Grace.Parser as Parser
 import qualified Grace.Pretty
 import qualified Grace.REPL as REPL
+import qualified Grace.Server as Server
 import qualified Grace.Syntax as Syntax
 import qualified Grace.Type as Type
 import qualified Grace.Value as Value
@@ -60,6 +61,7 @@ data Options
     | Format { highlight :: Highlight, files :: [FilePath] }
     | Builtins { highlight :: Highlight }
     | REPL {}
+    | Serve { port :: Int }
 
 parserInfo :: ParserInfo Options
 parserInfo =
@@ -112,6 +114,10 @@ parser = do
     let repl = do
             pure REPL{}
 
+    let serve = do
+          port <- Options.option Options.auto (Options.help "Port to serve on" <> Options.long "port")
+          return $ Serve {..}
+
     Options.hsubparser
         (   Options.command "interpret"
                 (Options.info interpret
@@ -135,6 +141,10 @@ parser = do
         <> Options.command "repl"
                 (Options.info repl
                     (Options.progDesc "Enter a REPL for Grace")
+                )
+        <> Options.command "serve"
+                (Options.info serve
+                    (Options.progDesc "Run a normalization server")
                 )
         )
   where
@@ -306,3 +316,6 @@ main = do
 
         REPL{} -> do
             REPL.repl
+
+        Serve{ .. } -> do
+            Server.serve port

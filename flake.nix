@@ -116,7 +116,7 @@
 
                 website = pkgs.website;
              in
-            { inherit grace graceMinimal website; };
+            { inherit grace graceMinimal website pkgs; };
 
           withDefaultCompiler = withCompiler "ghc902";
           withghcjs = withCompiler "ghcjs";
@@ -132,6 +132,19 @@
         apps.default = {
           type = "app";
           program = "${withDefaultCompiler.graceMinimal}/bin/grace";
+        };
+
+        packages.server-container = withDefaultCompiler.pkgs.dockerTools.buildImage {
+          name = "grace-server";
+          created = "now";
+          contents = withDefaultCompiler.pkgs.buildEnv {
+            name = "image-root";
+            paths = ["${withDefaultCompiler.graceMinimal}"];
+            pathsToLink = ["/bin"];
+          };
+          config = {
+            Cmd = ["/bin/grace serve --port 8000"];
+          };
         };
 
         defaultApp = apps.default;

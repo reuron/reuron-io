@@ -43,6 +43,7 @@ library
                      , Grace.Normalize
                      , Grace.Parser
                      , Grace.Pretty
+                     , Grace.Server
                      , Grace.Syntax
                      , Grace.HTTP
                      , Grace.TH
@@ -63,6 +64,7 @@ library
   else
     hs-source-dirs:    ghc
     build-depends:     ansi-terminal
+                     , bytestring
                      , haskeline
                      , http-client
                      , http-client-tls
@@ -70,6 +72,9 @@ library
                      , optparse-applicative
                      , repline
                      , terminal-size
+                     , wai
+                     , warp
+                     , wai-cors
     exposed-modules:   Grace
                      , Grace.REPL
 
