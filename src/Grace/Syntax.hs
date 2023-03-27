@@ -42,6 +42,8 @@ import Prettyprinter.Render.Terminal (AnsiStyle)
 import qualified Data.Text as Text
 import qualified Grace.Pretty as Pretty
 import qualified Grace.Type as Type
+import qualified Grace.NeuronNatives as NeuronNatives
+import Grace.NeuronNatives (ilK, ilNa, ilCa, ilCl)
 import qualified Prettyprinter as Pretty
 
 {- $setup
@@ -242,6 +244,10 @@ data Scalar
     -- ^
     --   >>> pretty Null
     --   null
+    | IonLevels NeuronNatives.IonLevels
+    -- ^
+    --  >>> pretty (IonLevels (IonLevels {k: 1.0, na: 1.0, ca: 0.0, cl: 0.0}))
+    --  {k: 1.0, na: 1.0, ca: 0.0, cl: 0.0}
     deriving (Eq, Generic, Lift, Show)
 
 instance Pretty Scalar where
@@ -252,6 +258,17 @@ instance Pretty Scalar where
     pretty (Natural number) = Pretty.scalar (pretty number)
     pretty (Text text)      = Pretty.scalar (Type.prettyTextLiteral text)
     pretty  Null            = Pretty.scalar "null"
+    pretty  (IonLevels ls)  =
+      let
+        NeuronNatives.IonLevels { ilK, ilNa, ilCa, ilCl } = ls
+        fieldValues =
+          [ ("k", Scalar { location = (), scalar = Real ilK })
+          , ("na", Scalar { location = (), scalar = Real ilNa })
+          , ("ca", Scalar { location = (), scalar = Real ilCa })
+          , ("cl", Scalar { location = (), scalar = Real ilCl })
+          ] :: [(Text, Syntax () Scientific)]
+      in
+      prettyPrimitiveExpression (Record {location = (), fieldValues})
 
 -- | A binary infix operator
 data Operator
@@ -361,6 +378,10 @@ data Builtin
     -- ^
     --   >>> pretty NaturalFold
     --   Natural/fold
+    | NeuronIonLevels
+    -- ^
+    --   >>> pretty NeuronIonLevels
+    --   Neuron/IonLevels
     | TextEqual
     -- ^
     --   >>> pretty TextEqual
@@ -388,6 +409,7 @@ instance Pretty Builtin where
     pretty ListReverse    = Pretty.builtin "List/reverse"
     pretty ListTake       = Pretty.builtin "List/take"
     pretty NaturalFold    = Pretty.builtin "Natural/fold"
+    pretty NeuronIonLevels = Pretty.builtin "Neuron/IonLevels"
     pretty TextEqual      = Pretty.builtin "Text/equal"
 
 -- | Pretty-print an expression

@@ -1480,6 +1480,9 @@ infer e0 = do
         Syntax.Scalar{ scalar = Syntax.Text _, .. } -> do
             return Type.Scalar{ scalar = Monotype.Text, .. }
 
+        Syntax.Scalar{ scalar = Syntax.IonLevels _, .. } -> do
+            return Type.Scalar{ scalar = Monotype.IonLevels, .. }
+
         Syntax.Scalar{ scalar = Syntax.Null, .. } -> do
             -- NOTE: You might think that you could just infer that `null`
             -- has type `forall (a : Type) . Optional a`.  This does not work
@@ -1826,6 +1829,9 @@ infer e0 = do
                     ~>  ((var "a" ~> var "a") ~> (var "a" ~> var "a"))
                 , ..
                 }
+
+        Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, .. } -> do
+          return $ Type.Record { fields = _ } ~> Type.Scalar { scalar = _, .. }
 
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return

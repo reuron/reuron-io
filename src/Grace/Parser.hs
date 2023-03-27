@@ -197,6 +197,7 @@ render t = case t of
     Lexer.Merge            -> "merge"
     Lexer.Natural          -> "Natural"
     Lexer.NaturalFold      -> "Natural/fold"
+    Lexer.NeuronIonLevels  -> "Neuron/IonLevels"
     Lexer.Null             -> "null"
     Lexer.OpenAngle        -> "<"
     Lexer.OpenBrace        -> "{"

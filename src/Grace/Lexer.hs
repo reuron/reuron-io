@@ -122,6 +122,7 @@ parseToken =
             , IntegerOdd     <$ symbol "Integer/odd"
             , JSONFold       <$ symbol "JSON/fold"
             , NaturalFold    <$ symbol "Natural/fold"
+            , NeuronIonLevels <$ symbol "Neuron/IonLevels"
             , TextEqual      <$ symbol "Text/equal"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
@@ -332,6 +333,7 @@ reserved =
         , "List/take"
         , "Natural"
         , "Natural/fold"
+        , "Neuron/IonLevels"
         , "Optional"
         , "Text"
         , "Text/equal"
@@ -467,6 +469,7 @@ data Token
     | Merge
     | Natural
     | NaturalFold
+    | NeuronIonLevels
     | Null
     | OpenAngle
     | OpenBrace
