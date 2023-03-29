@@ -34,6 +34,14 @@ module Grace.Type
     , prettyRecordLabel
     , prettyAlternativeLabel
     , prettyTextLiteral
+      -- * Type aliases
+    , unit
+    , ionsRecord
+    , gatingRecord
+    , magnitudeRecord
+    , sigmoidRecord
+    , linearExpRecord
+    , real
     ) where
 
 import Control.Lens (Plated(..))
@@ -818,3 +826,70 @@ prettyAlternativeLabel alternative
         label (pretty alternative)
     | otherwise =
         label (prettyQuotedAlternative alternative)
+
+
+-- | Helper types (like type aliases).
+unit :: loc -> Type loc
+unit location = Record { fields = Fields [] Monotype.EmptyFields, location }
+
+ionsRecord :: loc -> Type loc
+ionsRecord location = Record {
+    fields = Fields
+        [("k",  Scalar { scalar = Monotype.Real, .. })
+        ,("na", Scalar { scalar = Monotype.Real, .. })
+        ,("ca", Scalar { scalar = Monotype.Real, .. })
+        ,("cl", Scalar { scalar = Monotype.Real, .. })
+        ] Monotype.EmptyFields
+        , ..
+    }
+
+gatingRecord :: loc -> Type loc
+gatingRecord location = Record {
+  fields = Fields
+    [("gates", Scalar { scalar = Monotype.Natural, location })
+    ,("magnitude", magnitudeRecord location)
+    ,("time_constant", Record {
+         fields = Fields
+           [("sigmoid", Optional { type_ = sigmoidRecord location, .. })
+           ,("linear_exponential", Optional { type_ = linearExpRecord location, .. })
+           ] Monotype.EmptyFields,
+           ..
+
+     })
+    ] Monotype.EmptyFields,
+    ..
+    }
+
+magnitudeRecord :: loc -> Type loc
+magnitudeRecord location = Record {
+  fields = Fields
+    [("v_at_half_max_mv", real location)
+    ,("slope", real location)
+    ] Monotype.EmptyFields
+  , ..
+  }
+
+sigmoidRecord :: loc -> Type loc
+sigmoidRecord location = Record {
+  fields = Fields
+    [("v_at_max_tau_mv", real location)
+    ,("c_base", real location)
+    ,("c_amp", real location)
+    ,("sigma", real location)
+    ] Monotype.EmptyFields
+  , ..
+  }
+
+
+linearExpRecord :: loc -> Type loc
+linearExpRecord location = Record {
+  fields = Fields
+    [("coef", real location)
+    ,("v_offset", real location)
+    ,("inner_coef", real location)
+    ] Monotype.EmptyFields
+  , ..
+  }
+
+real :: loc -> Type loc
+real location = Scalar { scalar = Monotype.Real, .. }

@@ -336,6 +336,15 @@ apply
   where
     go 0 !result = result
     go m !result = go (m - 1) (apply succ result)
+apply
+    (Value.Builtin NeuronIonLevels) ionsRecord
+     = ionsRecord
+apply
+    (Value.Builtin NeuronGating) gatingRecord
+     = gatingRecord
+apply
+    (Value.Builtin NeuronChannel) channelRecord
+     = channelRecord
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
 apply (Value.Builtin IntegerOdd) (Value.Scalar x)

@@ -122,7 +122,9 @@ parseToken =
             , IntegerOdd     <$ symbol "Integer/odd"
             , JSONFold       <$ symbol "JSON/fold"
             , NaturalFold    <$ symbol "Natural/fold"
-            , NeuronIonLevels <$ symbol "Neuron/IonLevels"
+            , NeuronIonLevels <$ symbol "Neuron/ions"
+            , NeuronGating <$ symbol "Neuron/gating"
+            , NeuronChannel <$ symbol "Neuron/channel"
             , TextEqual      <$ symbol "Text/equal"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
@@ -333,7 +335,9 @@ reserved =
         , "List/take"
         , "Natural"
         , "Natural/fold"
-        , "Neuron/IonLevels"
+        , "Neuron/ions"
+        , "Neuron/gating"
+        , "Neuron/channel"
         , "Optional"
         , "Text"
         , "Text/equal"
@@ -470,6 +474,8 @@ data Token
     | Natural
     | NaturalFold
     | NeuronIonLevels
+    | NeuronGating
+    | NeuronChannel
     | Null
     | OpenAngle
     | OpenBrace

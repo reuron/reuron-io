@@ -197,7 +197,9 @@ render t = case t of
     Lexer.Merge            -> "merge"
     Lexer.Natural          -> "Natural"
     Lexer.NaturalFold      -> "Natural/fold"
-    Lexer.NeuronIonLevels  -> "Neuron/IonLevels"
+    Lexer.NeuronIonLevels  -> "Neuron/ions"
+    Lexer.NeuronGating     -> "Neuron/gating"
+    Lexer.NeuronChannel    -> "Neuron/channel"
     Lexer.Null             -> "null"
     Lexer.OpenAngle        -> "<"
     Lexer.OpenBrace        -> "{"
@@ -447,6 +449,18 @@ grammar = mdo
         <|> do  location <- locatedToken Lexer.NaturalFold
 
                 return Syntax.Builtin{ builtin = Syntax.NaturalFold, .. }
+
+        <|> do  location <- locatedToken Lexer.NeuronIonLevels
+
+                return Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, .. }
+
+        <|> do  location <- locatedToken Lexer.NeuronGating
+
+                return Syntax.Builtin{ builtin = Syntax.NeuronGating, .. }
+
+        <|> do  location <- locatedToken Lexer.NeuronChannel
+
+                return Syntax.Builtin{ builtin = Syntax.NeuronChannel, .. }
 
         <|> do  location <- locatedToken Lexer.TextEqual
 
