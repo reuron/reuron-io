@@ -42,6 +42,7 @@ module Grace.Type
     , sigmoidRecord
     , linearExpRecord
     , real
+    , json
     ) where
 
 import Control.Lens (Plated(..))
@@ -893,3 +894,6 @@ linearExpRecord location = Record {
 
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
+
+json :: loc -> Type loc
+json location = Scalar { scalar = Monotype.JSON, .. }

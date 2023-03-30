@@ -1480,9 +1480,6 @@ infer e0 = do
         Syntax.Scalar{ scalar = Syntax.Text _, .. } -> do
             return Type.Scalar{ scalar = Monotype.Text, .. }
 
-        Syntax.Scalar{ scalar = Syntax.IonLevels _, .. } -> do
-            return Type.Scalar{ scalar = Monotype.IonLevels, .. }
-
         Syntax.Scalar{ scalar = Syntax.Null, .. } -> do
             -- NOTE: You might think that you could just infer that `null`
             -- has type `forall (a : Type) . Optional a`.  This does not work
@@ -1831,10 +1828,11 @@ infer e0 = do
                 }
 
         Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, location } -> do
-          return $ ionsRecord location ~> ionsRecord location
+          return $ Type.ionsRecord location ~> Type.json location
 
         Syntax.Builtin{ builtin = Syntax.NeuronGating, location } -> do
-          return $ gatingRecord location ~> gatingRecord location
+          let argument = Type.Record {}
+          return $ argument ~> Type.json location
 
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
@@ -2526,69 +2524,3 @@ listToText elements =
 prettyToText :: Pretty a => a -> Text
 prettyToText = Grace.Pretty.renderStrict False Width.defaultWidth
 
--- Helper types
-ionsRecord :: loc -> Type loc
-ionsRecord location = Type.Record {
-    fields = Type.Fields
-        [("k", Type.Scalar { scalar = Monotype.Real, .. })
-        ,("na", Type.Scalar { scalar = Monotype.Real, .. })
-        ,("ca", Type.Scalar { scalar = Monotype.Real, .. })
-        ,("cl", Type.Scalar { scalar = Monotype.Real, .. })
-        ] Monotype.EmptyFields
-        , ..
-    }
-
-gatingRecord :: loc -> Type loc
-gatingRecord location = Type.Record {
-  fields = Type.Fields
-    [("gates", Type.Scalar { scalar = Monotype.Natural, location })
-    ,("magnitude", magnitudeRecord location)
-    ,("time_constant", Type.Record {
-         fields = Type.Fields
-           [("sigmoid", Type.Record { fields = Type.Fields [] Monotype.EmptyFields, ..})
-           ,("instantaneous", unit location)
-           ,("linear_exponential", Type.Record { fields = Type.Fields [] Monotype.EmptyFields, .. })
-           ] Monotype.EmptyFields,
-           ..
-
-     })
-    ] Monotype.EmptyFields,
-    ..
-    }
-
-magnitudeRecord :: loc -> Type loc
-magnitudeRecord location = Type.Record {
-  fields = Type.Fields
-    [("v_at_half_max_mv", real location)
-    ,("slope", real location)
-    ] Monotype.EmptyFields
-  , ..
-  }
-
-sigmoidRecord :: loc -> Type loc
-sigmoidRecord location = Type.Record {
-  fields = Type.Fields
-    [("v_at_max_tau_mv", real location)
-    ,("c_base", real location)
-    ,("c_amp", real location)
-    ,("sigma", real location)
-    ] Monotype.EmptyFields
-  , ..
-  }
-
-
-linearExpRecord :: loc -> Type loc
-linearExpRecord location = Type.Record {
-  fields = Type.Fields
-    [("coef", real location)
-    ,("v_offset", real location)
-    ,("inner_coef", real location)
-    ] Monotype.EmptyFields
-  , ..
-  }
-
-unit :: loc -> Type loc
-unit location = Type.Record { fields = Type.Fields [] Monotype.EmptyFields, location }
-
-real :: loc -> Type loc
-real location = Type.Scalar { scalar = Monotype.Real, .. }

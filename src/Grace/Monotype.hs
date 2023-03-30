@@ -75,11 +75,6 @@ data Scalar
     --
     -- >>> pretty Text
     -- Text
-    | IonLevels
-    -- ^ IonLevels type
-    --
-    -- >>> pretty IonLevels
-    -- IonLevels
     deriving stock (Eq, Generic, Lift, Show)
 
 instance Pretty Scalar where
@@ -89,7 +84,6 @@ instance Pretty Scalar where
     pretty Natural = builtin "Natural"
     pretty Integer = builtin "Integer"
     pretty Text    = builtin "Text"
-    pretty IonLevels = builtin "IonLevels"
 
 -- | A monomorphic record type
 data Record = Fields [(Text, Monotype)] RemainingFields
