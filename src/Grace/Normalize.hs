@@ -342,9 +342,54 @@ apply
 apply
     (Value.Builtin NeuronGating) gatingRecord
      = gatingRecord
+-- apply (Value.Alternative "Sigmoid") fields =
+--   fields
+-- apply (Value.Alternative "LinearExp") fields =
+--   fields
+-- apply (Value.Alternative "Instantaneous") fields =
+--   fields
 apply
-    (Value.Builtin NeuronChannel) channelRecord
-     = channelRecord
+    (Value.Builtin NeuronChannel)
+    (Value.Record
+      (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+        [("activation", activation)
+        ,("inactivation", inactivation)
+        ,("ion_selectivity", ions)
+        ]
+      )
+    )
+     = Value.NeuronChannel $ Value.Record (HashMap.fromList
+                     [("ion_selectivity", ions)
+                     ,("activation", convertActivation activation)
+                     ,("inactivation", convertActivation inactivation)])
+  where
+    convertActivation (Value.Scalar Null) = Value.Scalar Null
+    convertActivation (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                       [("gates", gates)
+                       ,("magnitude", magnitude)
+                       ,("time_constant", timeConstant)
+                       ])) = Value.Record (HashMap.fromList
+                                           [("gates", gates)
+                                           ,("magnitude", magnitude)
+                                           ,("time_constant", convertTimeConstant timeConstant)
+                                           ])
+    convertActivation x = error $ "Encountered non-record activation: " ++ show x
+    convertTimeConstant (Value.Application (Value.Alternative "Sigmoid") sigmoidFields) = sigmoidFields
+    convertTimeConstant (Value.Application (Value.Alternative "LinearExp") linearExpFields) = linearExpFields
+    convertTimeConstant (Value.Application (Value.Alternative "Instantaneous") nullFields) = nullFields
+    convertTimeConstant x = error $ "Encountered invalid timeConstant: " ++ show x
+apply
+    (Value.Builtin NeuronChannel)
+    x = error $ "applying Neuron/channel to " ++ show x
+apply
+    (Value.Builtin NeuronMembrane)
+    (Value.Record
+      (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+       [("capacitance_farads_per_square_cm", capacitance)
+       ,("membrane_channels", membraneChannels)
+       ]
+      )
+    ) = error "membrane"
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
 apply (Value.Builtin IntegerOdd) (Value.Scalar x)
@@ -509,5 +554,9 @@ quote names value =
 
         Value.Builtin builtin ->
             Syntax.Builtin{..}
+        Value.NeuronChannel inner ->
+            quote names inner
+        Value.NeuronMembrane inner ->
+            quote names inner
   where
     location = ()

@@ -96,6 +96,8 @@ data Value
     | Builtin Builtin
     | Scalar Scalar
     | Operator Value Operator Value
+    | NeuronChannel Value
+    | NeuronMembrane Value
     deriving stock (Eq, Show)
 
 instance IsString Value where

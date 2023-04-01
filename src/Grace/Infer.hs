@@ -1830,9 +1830,19 @@ infer e0 = do
         Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, location } -> do
           return $ Type.ionsRecord location ~> Type.json location
 
+        -- TODO: Remove this and the Neuron/gating builtin. Neuron/channel is enough.
         Syntax.Builtin{ builtin = Syntax.NeuronGating, location } -> do
-          let argument = Type.Record {}
+          let argument = Type.Record {
+                fields = Type.Fields
+                  [("gates", Type.natural location)
+                  ,("activation",   Type.Optional { type_ = Type.gatingRecord location, .. })
+                  ,("inactivation", Type.Optional { type_ = Type.gatingRecord location, .. })
+                  ] Monotype.EmptyFields
+                , ..}
           return $ argument ~> Type.json location
+
+        Syntax.Builtin{ builtin = Syntax.NeuronChannel, location } -> do
+          return $ Type.channelRecord location ~> Type.channel location
 
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return

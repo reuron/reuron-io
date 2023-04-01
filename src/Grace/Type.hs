@@ -37,12 +37,16 @@ module Grace.Type
       -- * Type aliases
     , unit
     , ionsRecord
+    , channelRecord
     , gatingRecord
+    , timeConstant
     , magnitudeRecord
     , sigmoidRecord
     , linearExpRecord
     , real
     , json
+    , natural
+    , channel
     ) where
 
 import Control.Lens (Plated(..))
@@ -844,21 +848,24 @@ ionsRecord location = Record {
         , ..
     }
 
+channelRecord :: loc -> Type loc
+channelRecord location = Record {
+  fields = Fields
+    [("ion_selectivity", ionsRecord location)
+    ,("activation", Optional { type_ = gatingRecord location, .. })
+    ,("inactivation", Optional { type_ = gatingRecord location, .. })
+    ] Monotype.EmptyFields,
+    ..
+    }
+
 gatingRecord :: loc -> Type loc
 gatingRecord location = Record {
   fields = Fields
-    [("gates", Scalar { scalar = Monotype.Natural, location })
+    [("gates", natural location)
     ,("magnitude", magnitudeRecord location)
-    ,("time_constant", Record {
-         fields = Fields
-           [("sigmoid", Optional { type_ = sigmoidRecord location, .. })
-           ,("linear_exponential", Optional { type_ = linearExpRecord location, .. })
-           ] Monotype.EmptyFields,
-           ..
-
-     })
-    ] Monotype.EmptyFields,
-    ..
+    ,("time_constant", timeConstant location)
+    ] Monotype.EmptyFields
+  , ..
     }
 
 magnitudeRecord :: loc -> Type loc
@@ -869,6 +876,15 @@ magnitudeRecord location = Record {
     ] Monotype.EmptyFields
   , ..
   }
+
+timeConstant :: loc -> Type loc
+timeConstant location =
+  Union { alternatives = Alternatives
+  [("Instantaneous", unit location)
+  ,("Sigmoid", sigmoidRecord location)
+  ,("LinearExp", linearExpRecord location)
+  ] Monotype.EmptyAlternatives
+        , .. }
 
 sigmoidRecord :: loc -> Type loc
 sigmoidRecord location = Record {
@@ -897,3 +913,9 @@ real location = Scalar { scalar = Monotype.Real, .. }
 
 json :: loc -> Type loc
 json location = Scalar { scalar = Monotype.JSON, .. }
+
+natural :: loc -> Type loc
+natural location = Scalar { scalar = Monotype.Natural, .. }
+
+channel :: loc -> Type loc
+channel location = Scalar { scalar = Monotype.NeuronChannel, .. }
