@@ -1844,6 +1844,9 @@ infer e0 = do
         Syntax.Builtin{ builtin = Syntax.NeuronChannel, location } -> do
           return $ Type.channelRecord location ~> Type.channel location
 
+        Syntax.Builtin{ builtin = Syntax.NeuronMembrane, location } -> do
+          return $ Type.membraneRecord location ~> Type.membrane location
+
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
                 (   Type.Scalar{ scalar = Monotype.Text, .. }

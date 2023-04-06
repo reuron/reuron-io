@@ -386,10 +386,26 @@ apply
     (Value.Record
       (List.sortBy (Ord.comparing fst) . HashMap.toList ->
        [("capacitance_farads_per_square_cm", capacitance)
-       ,("membrane_channels", membraneChannels)
+       ,("membrane_channels", Value.List membraneChannels)
        ]
       )
-    ) = error "membrane"
+    ) = Value.Record (HashMap.fromList
+                      [("capacitance_farads_per_square_cm", capacitance)
+                      ,("membrane_channels", Value.List $ handleMembraneChannel <$> membraneChannels)
+                      ]
+                     )
+        where
+          handleMembraneChannel :: Value -> Value
+          handleMembraneChannel
+            (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                           [("channel", channel)
+                           ,("siemens_per_square_cm", conductance)
+                           ])) = Value.Record
+                                 [("channel", channel)
+                                 ,("siemens_per_square_cm", conductance)]
+          handleMembraneChannel x = error $ "Encountered unexpected membraneChanne: " ++ show x
+apply (Value.Builtin NeuronMembrane) x = error $ "Encountered unexpected NeuronMembrane: " ++ show x
+
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
 apply (Value.Builtin IntegerOdd) (Value.Scalar x)

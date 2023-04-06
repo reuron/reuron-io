@@ -390,6 +390,10 @@ data Builtin
     -- ^
     --   >>> pretty NeuronChannel
     --   Neuron/channel
+    | NeuronMembrane
+    -- ^
+    --   >>> pretty NeuronMembrane
+    --   Neuron/membrane
     | TextEqual
     -- ^
     --   >>> pretty TextEqual
@@ -420,6 +424,8 @@ instance Pretty Builtin where
     pretty NeuronIonLevels = Pretty.builtin "Neuron/ions"
     pretty NeuronGating = Pretty.builtin "Neuron/gating"
     pretty NeuronChannel = Pretty.builtin "Neuron/channel"
+    pretty NeuronMembrane = Pretty.builtin "Neuron/membrane"
+
     pretty TextEqual      = Pretty.builtin "Text/equal"
 
 -- | Pretty-print an expression

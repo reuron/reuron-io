@@ -43,10 +43,12 @@ module Grace.Type
     , magnitudeRecord
     , sigmoidRecord
     , linearExpRecord
+    , membraneRecord
     , real
     , json
     , natural
     , channel
+    , membrane
     ) where
 
 import Control.Lens (Plated(..))
@@ -908,6 +910,23 @@ linearExpRecord location = Record {
   , ..
   }
 
+membraneRecord :: loc -> Type loc
+membraneRecord location = Record {
+  fields = Fields
+    [("capacitance_farads_per_square_cm", real location)
+    ,("membrane_channels",
+      List { type_ = Record
+             { fields = Fields
+               [("channel", channel location)
+               ,("siemens_per_square_cm", real location)
+               ] EmptyFields
+             , .. }
+           , ..
+           }
+     )] EmptyFields
+  , ..
+}
+
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
 
@@ -919,3 +938,6 @@ natural location = Scalar { scalar = Monotype.Natural, .. }
 
 channel :: loc -> Type loc
 channel location = Scalar { scalar = Monotype.NeuronChannel, .. }
+
+membrane :: loc -> Type loc
+membrane location = Scalar {  scalar = Monotype.NeuronMembrane, ..  }

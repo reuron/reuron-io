@@ -125,6 +125,8 @@ parseToken =
             , NeuronIonLevels <$ symbol "Neuron/ions"
             , NeuronGating <$ symbol "Neuron/gating"
             , NeuronChannel <$ symbol "Neuron/channel"
+            , NeuronMembrane <$ symbol "Neuron/membrane"
+            , NeuronNeuron <$ symbol "Neuron/neuron"
             , TextEqual      <$ symbol "Text/equal"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
@@ -476,6 +478,8 @@ data Token
     | NeuronIonLevels
     | NeuronGating
     | NeuronChannel
+    | NeuronMembrane
+    | NeuronNeuron
     | Null
     | OpenAngle
     | OpenBrace
