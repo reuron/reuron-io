@@ -98,6 +98,7 @@ data Value
     | Operator Value Operator Value
     | NeuronChannel Value
     | NeuronMembrane Value
+    | NeuronNeuron Value
     deriving stock (Eq, Show)
 
 instance IsString Value where

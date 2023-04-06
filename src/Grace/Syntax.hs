@@ -394,6 +394,10 @@ data Builtin
     -- ^
     --   >>> pretty NeuronMembrane
     --   Neuron/membrane
+    | NeuronNeuron
+    -- ^
+    --   >>> pretty NeuronNeuron
+    --   Neuron/neuron
     | TextEqual
     -- ^
     --   >>> pretty TextEqual

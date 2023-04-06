@@ -406,6 +406,18 @@ apply
           handleMembraneChannel x = error $ "Encountered unexpected membraneChanne: " ++ show x
 apply (Value.Builtin NeuronMembrane) x = error $ "Encountered unexpected NeuronMembrane: " ++ show x
 
+apply
+  (Value.Builtin NeuronNeuron)
+  (Value.Record
+    (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+      [("segments", segments)
+      ,("membranes", membranes)
+      ]
+    )
+  ) = Value.Record (HashMap.fromList
+      [("segments", segments)
+      ,("membranes", membranes)])
+
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
 apply (Value.Builtin IntegerOdd) (Value.Scalar x)
@@ -573,6 +585,8 @@ quote names value =
         Value.NeuronChannel inner ->
             quote names inner
         Value.NeuronMembrane inner ->
+            quote names inner
+        Value.NeuronNeuron inner ->
             quote names inner
   where
     location = ()
