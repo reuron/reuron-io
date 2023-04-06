@@ -44,11 +44,14 @@ module Grace.Type
     , sigmoidRecord
     , linearExpRecord
     , membraneRecord
+    , neuronRecord
+    , integer
     , real
     , json
     , natural
     , channel
     , membrane
+    , neuron
     ) where
 
 import Control.Lens (Plated(..))
@@ -927,6 +930,28 @@ membraneRecord location = Record {
   , ..
 }
 
+neuronRecord :: loc -> Type loc
+neuronRecord location = Record {
+  fields = Fields
+    [("segments", List { type_ = Record
+                         { fields = Fields
+                           [("id", natural location)
+                           ,("x", real location)
+                           ,("y", real location)
+                           ,("z", real location)
+                           ,("r", real location)
+                           ,("type", natural location)
+                           ,("parent", integer location)
+                           ] EmptyFields
+                         , ..
+                         }
+                       , ..
+                       })
+    ,("membranes",
+      List { type_ = membrane location, .. }
+     )] EmptyFields
+  , ..
+}
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
 
@@ -936,8 +961,14 @@ json location = Scalar { scalar = Monotype.JSON, .. }
 natural :: loc -> Type loc
 natural location = Scalar { scalar = Monotype.Natural, .. }
 
+integer :: loc -> Type loc
+integer location = Scalar { scalar = Monotype.Integer, .. }
+
 channel :: loc -> Type loc
 channel location = Scalar { scalar = Monotype.NeuronChannel, .. }
 
 membrane :: loc -> Type loc
 membrane location = Scalar {  scalar = Monotype.NeuronMembrane, ..  }
+
+neuron :: loc -> Type loc
+neuron location = Scalar {  scalar = Monotype.NeuronNeuron, ..  }

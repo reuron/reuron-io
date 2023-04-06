@@ -429,6 +429,7 @@ instance Pretty Builtin where
     pretty NeuronGating = Pretty.builtin "Neuron/gating"
     pretty NeuronChannel = Pretty.builtin "Neuron/channel"
     pretty NeuronMembrane = Pretty.builtin "Neuron/membrane"
+    pretty NeuronNeuron = Pretty.builtin "Neuron/neuron"
 
     pretty TextEqual      = Pretty.builtin "Text/equal"
 
