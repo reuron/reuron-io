@@ -1,0 +1,12 @@
+app = "reuron-grace"
+
+[build]
+image = "grace-server:az4p3r66zfinsvbs5y8c2cakxphv1gjl"
+
+[[services]]
+internal_port = 8000
+protocol = "tcp"
+
+  [[services.ports]]
+  handlers = ["http"]
+  port = 80
