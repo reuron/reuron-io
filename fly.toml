@@ -1,7 +1,7 @@
 app = "reuron-grace"
 
 [build]
-image = "grace-server:az4p3r66zfinsvbs5y8c2cakxphv1gjl"
+image = "grace-server:71z8h012afyffg0bnjgq1fdd37hb3x5l"
 
 [[services]]
 internal_port = 8000
