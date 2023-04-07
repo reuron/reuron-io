@@ -81,6 +81,7 @@ data Scalar
     -- >>> pretty NeuronChannel
     -- Channel
     | NeuronMembrane
+    | NeuronNeuron
     deriving stock (Eq, Generic, Lift, Show)
 
 instance Pretty Scalar where
@@ -92,6 +93,7 @@ instance Pretty Scalar where
     pretty Text    = builtin "Text"
     pretty NeuronChannel = builtin "Channel"
     pretty NeuronMembrane = builtin "Membrane"
+    pretty NeuronNeuron = builtin "Neuron"
 
 -- | A monomorphic record type
 data Record = Fields [(Text, Monotype)] RemainingFields
