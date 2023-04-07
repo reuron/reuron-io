@@ -410,13 +410,15 @@ apply
   (Value.Builtin NeuronNeuron)
   (Value.Record
     (List.sortBy (Ord.comparing fst) . HashMap.toList ->
-      [("segments", segments)
-      ,("membranes", membranes)
+      [("membranes", membranes)
+      ,("segments", segments)
       ]
     )
   ) = Value.Record (HashMap.fromList
-      [("segments", segments)
-      ,("membranes", membranes)])
+      [("membranes", membranes)
+      ,("segments", segments)])
+
+apply (Value.Builtin NeuronNeuron) x = error (show x)
 
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))

@@ -139,8 +139,13 @@
           created = "now";
           contents = withDefaultCompiler.pkgs.buildEnv {
             name = "image-root";
-            paths = ["${withDefaultCompiler.graceMinimal}"];
-            pathsToLink = ["/bin"];
+            paths = with withDefaultCompiler.pkgs;
+              [ "${withDefaultCompiler.graceMinimal}"
+                bash
+                coreutils
+                cacert
+              ];
+            pathsToLink = ["/bin" "/etc"];
           };
           config = {
             Cmd = ["${withDefaultCompiler.graceMinimal}/bin/grace" "serve" "--port" "8000"];
