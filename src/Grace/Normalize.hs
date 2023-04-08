@@ -374,10 +374,15 @@ apply
                                            ,("time_constant", convertTimeConstant timeConstant)
                                            ])
     convertActivation x = error $ "Encountered non-record activation: " ++ show x
-    convertTimeConstant (Value.Application (Value.Alternative "Sigmoid") sigmoidFields) = sigmoidFields
-    convertTimeConstant (Value.Application (Value.Alternative "LinearExp") linearExpFields) = linearExpFields
-    convertTimeConstant (Value.Application (Value.Alternative "Instantaneous") nullFields) = nullFields
+
+    -- Time constant variant is one of the recognized types of time constant function.
+    isAlt :: Text.Text -> Bool
+    isAlt alt = alt == "Sigmoid" || alt ==  "LinearExp" || alt == "Instantaneous"
+
+    convertTimeConstant (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
+      Value.Record ( HashMap.insert "type" (Value.Scalar (Text altName)) fields )
     convertTimeConstant x = error $ "Encountered invalid timeConstant: " ++ show x
+
 apply
     (Value.Builtin NeuronChannel)
     x = error $ "applying Neuron/channel to " ++ show x
