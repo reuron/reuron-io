@@ -907,7 +907,7 @@ linearExpRecord :: loc -> Type loc
 linearExpRecord location = Record {
   fields = Fields
     [("coef", real location)
-    ,("v_offset", real location)
+    ,("v_offset_mv", real location)
     ,("inner_coef", real location)
     ] Monotype.EmptyFields
   , ..
