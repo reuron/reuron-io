@@ -45,6 +45,8 @@ module Grace.Type
     , linearExpRecord
     , membraneRecord
     , neuronRecord
+    , stimulatorRecord
+    , sceneRecord
     , integer
     , real
     , json
@@ -52,6 +54,9 @@ module Grace.Type
     , channel
     , membrane
     , neuron
+    , stimulator
+    , scene
+    , stimulatorSegment
     ) where
 
 import Control.Lens (Plated(..))
@@ -952,6 +957,73 @@ neuronRecord location = Record {
      )] EmptyFields
   , ..
 }
+
+stimulatorRecord :: loc -> Type loc
+stimulatorRecord location = Record {
+  fields = Fields
+    [("envelope", Record { fields = Fields
+                           [ ("period_sec", real location)
+                           , ("onset_sec", real location)
+                           , ("offset_sec", real location)
+                           ] Monotype.EmptyFields, ..
+                         })
+    ,("current_shape", currentShape location)
+    ] Monotype.EmptyFields, ..}
+
+currentShape :: loc -> Type loc
+currentShape location =
+  Union { alternatives = Alternatives
+        [("SquareWave", squareWaveRecord location)
+        ,("LinearRamp", linearRampRecord location)
+        ,("FrequencyRamp", frequencyRampRecord location)
+        ] Monotype.EmptyAlternatives , ..}
+
+squareWaveRecord :: loc -> Type loc
+squareWaveRecord location =
+  Record { fields = Fields
+           [("on_current_uamps_per_square_cm", real location)
+           ,("off_current_uamps_per_square_cm", real location)
+           ] Monotype.EmptyFields, .. }
+
+linearRampRecord :: loc -> Type loc
+linearRampRecord location =
+  Record { fields = Fields
+           [("start_current_uamps_per_square_cm", real location)
+           ,("end_current_uamps_per_square_cm", real location)
+           ,("off_current_uamps_per_square_cm", real location)
+           ] Monotype.EmptyFields, .. }
+
+frequencyRampRecord :: loc -> Type loc
+frequencyRampRecord location =
+  Record { fields = Fields
+           [("on_amplitude_uamps_per_square_cm", real location)
+           ,("offset_current_uamps_per_square_cm", real location)
+           ,("start_frequency_hz", real location)
+           ,("end_frequency_hz", real location)
+           ] Monotype.EmptyFields, .. }
+
+
+sceneRecord :: loc -> Type loc
+sceneRecord location =
+  Record { fields = Fields
+           [("neurons", List { type_ =
+                               Record { fields = Fields
+                                 [("neuron", neuron location)
+                                 ,("stimulator_segments", List { type_ = stimulatorSegment location, .. })
+                                 ] Monotype.EmptyFields
+                               , .. }
+                             , .. })
+           -- ,("synapses", synapses location) -- TODO: Implement synapses.
+           ] Monotype.EmptyFields, .. }
+
+stimulatorSegment :: loc -> Type loc
+stimulatorSegment location =
+  Record { fields = Fields
+         [("stimulator", stimulator location)
+         ,("segment", natural location)
+         ] Monotype.EmptyFields
+         , ..}
+
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
 
@@ -972,3 +1044,9 @@ membrane location = Scalar {  scalar = Monotype.NeuronMembrane, ..  }
 
 neuron :: loc -> Type loc
 neuron location = Scalar {  scalar = Monotype.NeuronNeuron, ..  }
+
+stimulator :: loc -> Type loc
+stimulator location = Scalar {  scalar = Monotype.NeuronStimulator, ..  }
+
+scene :: loc -> Type loc
+scene location = Scalar {  scalar = Monotype.NeuronScene, ..  }

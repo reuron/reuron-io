@@ -42,8 +42,6 @@ import Prettyprinter.Render.Terminal (AnsiStyle)
 import qualified Data.Text as Text
 import qualified Grace.Pretty as Pretty
 import qualified Grace.Type as Type
-import qualified Grace.NeuronNatives as NeuronNatives
-import Grace.NeuronNatives (ilK, ilNa, ilCa, ilCl)
 import qualified Prettyprinter as Pretty
 
 {- $setup
@@ -244,10 +242,6 @@ data Scalar
     -- ^
     --   >>> pretty Null
     --   null
-    | IonLevels NeuronNatives.IonLevels
-    -- ^
-    --  >>> pretty (IonLevels (IonLevels {k: 1.0, na: 1.0, ca: 0.0, cl: 0.0}))
-    --  {k: 1.0, na: 1.0, ca: 0.0, cl: 0.0}
     deriving (Eq, Generic, Lift, Show)
 
 instance Pretty Scalar where
@@ -258,17 +252,6 @@ instance Pretty Scalar where
     pretty (Natural number) = Pretty.scalar (pretty number)
     pretty (Text text)      = Pretty.scalar (Type.prettyTextLiteral text)
     pretty  Null            = Pretty.scalar "null"
-    pretty  (IonLevels ls)  =
-      let
-        NeuronNatives.IonLevels { ilK, ilNa, ilCa, ilCl } = ls
-        fieldValues =
-          [ ("k", Scalar { location = (), scalar = Real ilK })
-          , ("na", Scalar { location = (), scalar = Real ilNa })
-          , ("ca", Scalar { location = (), scalar = Real ilCa })
-          , ("cl", Scalar { location = (), scalar = Real ilCl })
-          ] :: [(Text, Syntax () Scientific)]
-      in
-      prettyPrimitiveExpression (Record {location = (), fieldValues})
 
 -- | A binary infix operator
 data Operator
@@ -398,6 +381,14 @@ data Builtin
     -- ^
     --   >>> pretty NeuronNeuron
     --   Neuron/neuron
+    | NeuronStimulator
+    -- ^
+    --   >>> pretty NeuronStimulator
+    --   Neuron/stimulator
+    | NeuronScene
+    -- ^
+    --   >>> pretty NeuronScene
+    --   Neuron/scene
     | TextEqual
     -- ^
     --   >>> pretty TextEqual
@@ -430,6 +421,8 @@ instance Pretty Builtin where
     pretty NeuronChannel = Pretty.builtin "Neuron/channel"
     pretty NeuronMembrane = Pretty.builtin "Neuron/membrane"
     pretty NeuronNeuron = Pretty.builtin "Neuron/neuron"
+    pretty NeuronStimulator = Pretty.builtin "Neuron/stimulator"
+    pretty NeuronScene = Pretty.builtin "Neuron/scene"
 
     pretty TextEqual      = Pretty.builtin "Text/equal"
 

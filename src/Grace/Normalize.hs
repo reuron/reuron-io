@@ -422,8 +422,29 @@ apply
   ) = Value.Record (HashMap.fromList
       [("membranes", membranes)
       ,("segments", segments)])
+apply (Value.Builtin NeuronNeuron) x = error (show x) -- TODO
 
-apply (Value.Builtin NeuronNeuron) x = error (show x)
+apply
+  (Value.Builtin NeuronStimulator)
+  (Value.Record
+    (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+      [("current_shape", currentShape)
+      ,("envelope", envelope)
+      ]
+    )
+  ) = Value.NeuronStimulator $ Value.Record (HashMap.fromList
+                                             [("current_shape", currentShape)
+                                             ,("envelope", convertEnvelope envelope)
+                                             ])
+      where
+        convertEnvelope (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
+                                              Value.Record (HashMap.insert "type" (Value.Scalar (Text altName)) fields)
+        convertEnvelope x = error (show x)
+
+        isAlt :: Text.Text -> Bool
+        isAlt alt = alt == "SquareWave" || alt == "LinearRamp" || alt == "FrequencyRamp"
+
+apply (Value.Builtin NeuronStimulator) x = error (show x) -- TODO
 
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
@@ -594,6 +615,8 @@ quote names value =
         Value.NeuronMembrane inner ->
             quote names inner
         Value.NeuronNeuron inner ->
+            quote names inner
+        Value.NeuronStimulator inner ->
             quote names inner
   where
     location = ()

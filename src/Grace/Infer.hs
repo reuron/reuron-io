@@ -1850,6 +1850,12 @@ infer e0 = do
         Syntax.Builtin{ builtin = Syntax.NeuronNeuron, location } -> do
           return $ Type.neuronRecord location ~> Type.neuron location
 
+        Syntax.Builtin{ builtin = Syntax.NeuronStimulator, location } -> do
+          return $ Type.stimulatorRecord location ~> Type.stimulator location
+
+        Syntax.Builtin{ builtin = Syntax.NeuronScene, location } -> do
+          return $ Type.sceneRecord location ~> Type.stimulator location
+
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
                 (   Type.Scalar{ scalar = Monotype.Text, .. }

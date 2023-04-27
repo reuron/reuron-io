@@ -127,6 +127,8 @@ parseToken =
             , NeuronChannel <$ symbol "Neuron/channel"
             , NeuronMembrane <$ symbol "Neuron/membrane"
             , NeuronNeuron <$ symbol "Neuron/neuron"
+            , NeuronStimulator <$ symbol "Neuron/stimulator"
+            , NeuronScene <$ symbol "Neuron/scene"
             , TextEqual      <$ symbol "Text/equal"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
@@ -480,6 +482,8 @@ data Token
     | NeuronChannel
     | NeuronMembrane
     | NeuronNeuron
+    | NeuronStimulator
+    | NeuronScene
     | Null
     | OpenAngle
     | OpenBrace

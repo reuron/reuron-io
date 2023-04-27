@@ -202,6 +202,8 @@ render t = case t of
     Lexer.NeuronChannel    -> "Neuron/channel"
     Lexer.NeuronMembrane   -> "Neuron/membrane"
     Lexer.NeuronNeuron     -> "Neuron/neuron"
+    Lexer.NeuronStimulator -> "Neuron/stimulator"
+    Lexer.NeuronScene      -> "Neuron/scene"
     Lexer.Null             -> "null"
     Lexer.OpenAngle        -> "<"
     Lexer.OpenBrace        -> "{"
@@ -471,6 +473,14 @@ grammar = mdo
         <|> do  location <- locatedToken Lexer.NeuronNeuron
 
                 return Syntax.Builtin{ builtin = Syntax.NeuronNeuron, .. }
+
+        <|> do  location <- locatedToken Lexer.NeuronStimulator
+
+                return Syntax.Builtin{ builtin = Syntax.NeuronStimulator, .. }
+
+        <|> do  location <- locatedToken Lexer.NeuronScene
+
+                return Syntax.Builtin{ builtin = Syntax.NeuronScene, .. }
 
         <|> do  location <- locatedToken Lexer.TextEqual
 
