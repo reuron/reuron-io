@@ -433,18 +433,35 @@ apply
       ]
     )
   ) = Value.NeuronStimulator $ Value.Record (HashMap.fromList
-                                             [("current_shape", currentShape)
-                                             ,("envelope", convertEnvelope envelope)
+                                             [("current_shape", convertCurrentShape currentShape)
+                                             ,("envelope", envelope)
                                              ])
       where
-        convertEnvelope (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
+        convertCurrentShape (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
                                               Value.Record (HashMap.insert "type" (Value.Scalar (Text altName)) fields)
-        convertEnvelope x = error (show x)
+        convertCurrentShape x = error (show x)
 
         isAlt :: Text.Text -> Bool
         isAlt alt = alt == "SquareWave" || alt == "LinearRamp" || alt == "FrequencyRamp"
 
 apply (Value.Builtin NeuronStimulator) x = error (show x) -- TODO
+
+apply (Value.Builtin NeuronScene)
+  (Value.Record
+  (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+   [("neurons", neurons)])) =
+  Value.NeuronScene $ Value.Record (HashMap.fromList [("neurons", convertNeurons neurons)])
+  where
+    convertNeurons (Value.List neuronsAndStimulators) = Value.List (convertNeuronAndStimulator <$> neuronsAndStimulators)
+    convertNeurons x = error (show x)
+
+    convertNeuronAndStimulator
+      (Value.Record (HashMap.toList ->
+                  [("neuron", neuron)
+                  ,("stimulator_segments", stimulatorSegment)])) = Value.Record (HashMap.fromList [("neuron", neuron), ("stimulator_segmens", stimulatorSegment)])
+    convertNeuronAndStimulator x = error (show x)
+apply (Value.Builtin NeuronScene) x = error (show x)
+
 
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Bool (even n))
@@ -617,6 +634,8 @@ quote names value =
         Value.NeuronNeuron inner ->
             quote names inner
         Value.NeuronStimulator inner ->
+            quote names inner
+        Value.NeuronScene inner ->
             quote names inner
   where
     location = ()

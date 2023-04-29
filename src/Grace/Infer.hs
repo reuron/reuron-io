@@ -1854,7 +1854,7 @@ infer e0 = do
           return $ Type.stimulatorRecord location ~> Type.stimulator location
 
         Syntax.Builtin{ builtin = Syntax.NeuronScene, location } -> do
-          return $ Type.sceneRecord location ~> Type.stimulator location
+          return $ Type.sceneRecord location ~> Type.scene location
 
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
