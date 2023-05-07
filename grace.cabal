@@ -76,6 +76,7 @@ library
                      , wai
                      , warp
                      , wai-cors
+                     , wai-app-static
     exposed-modules:   Grace
                      , Grace.REPL
 

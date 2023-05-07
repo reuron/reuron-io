@@ -13,6 +13,7 @@ import qualified Network.Wai as Wai
 import qualified Network.HTTP.Types.Status as HTTP
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
+import qualified Network.Wai.Application.Static as Wai
 
 import qualified Data.ByteString.Builder as Builder
 import qualified Grace.Interpret as Interpret
@@ -47,7 +48,8 @@ serve port = Warp.run port $ Cors.simpleCors $ \req respond ->
     ["echo"] -> do
       bytes <- Wai.lazyRequestBody req
       respond $ Wai.responseLBS HTTP.status200 [] bytes
-    _ -> respond $ Wai.responseLBS HTTP.status404 [] "Not found"
+    _ -> Wai.staticApp (Wai.defaultWebAppSettings "static") req respond
+    -- _ -> respond $ Wai.responseLBS HTTP.status404 [] "Not found"
 
 
 swcContentsToFfg :: LBS.ByteString -> Builder.Builder
