@@ -2,9 +2,10 @@
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/22.05;
     utils.url = github:numtide/flake-utils;
+    reuron.url = github:reuron/reuron;
   };
 
-  outputs = { nixpkgs, utils, ... }:
+  outputs = { nixpkgs, utils, reuron, ... }:
     utils.lib.eachDefaultSystem (system:
       let withCompiler = compiler:
             let overlay = pkgsNew: pkgsOld: {
@@ -104,6 +105,11 @@
                     chmod -R u+w $out
                     cp ${pkgsNew.haskell.packages."${compiler}".grace}/bin/try-grace.jsexe/all.min.js $out/js
                   '';
+
+                  reuron-io-static = pkgsNew.runCommand "build-reuron-io" {} ''
+                    mkdir -p $out/static
+                    cp ${reuron.packages.${system}.wasm-build.outPath}/* $out/static
+                  '';
                 };
                 config.allowBroken = true;
                 pkgs = import nixpkgs { inherit config system; overlays = [ overlay ]; };
@@ -115,8 +121,9 @@
                     (grace.overrideAttrs (_: { doCheck = false; }));
 
                 website = pkgs.website;
+                reuron-io-static = pkgs.reuron-io-static;
              in
-            { inherit grace graceMinimal website pkgs; };
+            { inherit grace graceMinimal website reuron-io-static pkgs; };
 
           withDefaultCompiler = withCompiler "ghc902";
           withghcjs = withCompiler "ghcjs";
@@ -125,6 +132,7 @@
         packages = {
           default = withDefaultCompiler.graceMinimal;
           website = withghcjs.website;
+          reuron-io-static = withghcjs.reuron-io-static;
         };
 
         defaultPackage = packages.default;
@@ -144,8 +152,9 @@
                 bash
                 coreutils
                 cacert
+                "${withghcjs.reuron-io-static}"
               ];
-            pathsToLink = ["/bin" "/etc"];
+            pathsToLink = ["/bin" "/etc" "/static"];
           };
           config = {
             Cmd = ["${withDefaultCompiler.graceMinimal}/bin/grace" "serve" "--port" "8000"];
