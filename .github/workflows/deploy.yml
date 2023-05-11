@@ -17,6 +17,8 @@ jobs:
         with:
           name: reuron
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Bump reuron version
+        run: nix flake lock --update-input reuron
       - name: Build server container
         run: nix build .#server-container
       - name: Load server container
