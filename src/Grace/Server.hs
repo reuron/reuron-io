@@ -72,7 +72,6 @@ serve port = Warp.run port $ Cors.simpleCors $ \req respond ->
       index <- LBS.readFile "static/index.html"
       respond $ Wai.responseLBS HTTP.status200 [] index
     _ -> Wai.staticApp (Wai.defaultWebAppSettings "static") req respond
-    -- _ -> respond $ Wai.responseLBS HTTP.status404 [] "Not found"
 
 parseSwcLines :: LBS.ByteString -> [SwcLine]
 parseSwcLines swcBytes = mapMaybe parseLine (LBS.lines swcBytes)
