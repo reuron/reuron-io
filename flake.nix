@@ -144,6 +144,7 @@
 
         packages.server-container = withDefaultCompiler.pkgs.dockerTools.buildImage {
           name = "grace-server";
+          tag = "latest";
           created = "now";
           contents = withDefaultCompiler.pkgs.buildEnv {
             name = "image-root";
