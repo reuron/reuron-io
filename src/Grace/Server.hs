@@ -99,7 +99,7 @@ encodeSwcLines swcLines =
     header :: Builder.Builder
     header =
       "let defaultSwcNeuron = \
-      \  https://raw.githubusercontent.com/imalsogreg/reuron/main/data/defaultSwcNeuron.ffg \
+      \  https://raw.githubusercontent.com/reuron/reuron-lib/main/defaultSwcNeuron.ffg \
       \in \n defaultSwcNeuron [ \
       \"
 
