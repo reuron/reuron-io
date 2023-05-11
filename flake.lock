@@ -101,11 +101,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1683565818,
-        "narHash": "sha256-8QDHaSMpyiL3NhWiB+QsIAzVCRSSV/WoK698tH/uaD0=",
+        "lastModified": 1683763982,
+        "narHash": "sha256-+ai5kjafYUD0n26O26orCJ41YfVuCZm9J6ZoZgwH6Vk=",
         "owner": "reuron",
         "repo": "reuron",
-        "rev": "1332f4c3734ccb97af0f3dca1db887c45b000a0f",
+        "rev": "2afcd10b7d640101705af6d768d31b374828b860",
         "type": "github"
       },
       "original": {

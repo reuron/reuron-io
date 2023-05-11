@@ -1,12 +1,22 @@
+# fly.toml app configuration file generated for reuron-grace on 2023-05-08T16:24:46-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
 app = "reuron-grace"
+primary_region = "sea"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
 
 [build]
-image = "grace-server:9hiqqzvb0y43rxi2avm1f6sdmwixc20g"
+  image = "grace-server:hcks2r9s2s286wf76pq98n8dmkrbm24m"
 
-[[services]]
-internal_port = 8000
-protocol = "tcp"
-
-  [[services.ports]]
-  handlers = ["http"]
-  port = 80
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 200
+    hard_limit = 250
