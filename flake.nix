@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/22.05;
     utils.url = github:numtide/flake-utils;
-    reuron.url = github:reuron/reuron/1f025662893dadf49561d08c386450056837e0a8;
+    reuron.url = github:reuron/reuron;
   };
 
   outputs = { nixpkgs, utils, reuron, ... }:
