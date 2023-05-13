@@ -458,7 +458,7 @@ apply (Value.Builtin NeuronScene)
     convertNeuronAndStimulator
       (Value.Record (HashMap.toList ->
                   [("neuron", neuron)
-                  ,("stimulator_segments", stimulatorSegment)])) = Value.Record (HashMap.fromList [("neuron", neuron), ("stimulator_segmens", stimulatorSegment)])
+                  ,("stimulator_segments", stimulatorSegment)])) = Value.Record (HashMap.fromList [("neuron", neuron), ("stimulator_segments", stimulatorSegment)])
     convertNeuronAndStimulator x = error (show x)
 apply (Value.Builtin NeuronScene) x = error (show x)
 
