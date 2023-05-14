@@ -164,6 +164,7 @@ simplifySwc degree swcLines =
     shouldKeep :: Set Int
     shouldKeep = Set.fromList $ map id_ $ keepableLines
 
+    -- TODO: Log a warning when returning -1.
     seekKeepableEntity :: Int -> Int
     seekKeepableEntity eid = case Map.lookup eid entities of
       Just SwcLine { parent_ } ->
