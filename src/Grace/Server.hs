@@ -170,7 +170,7 @@ simplifySwc degree swcLines =
         if eid `Set.member` shouldKeep
         then eid
         else seekKeepableEntity parent_
-      Nothing -> error $ "Unknown entity " ++ show eid
+      Nothing -> -1 --error $ "Unknown entity " ++ show eid
 
     adjustParent :: SwcLine -> SwcLine
     adjustParent s@SwcLine {parent_} =
