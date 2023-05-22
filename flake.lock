@@ -32,7 +32,7 @@
     },
     "naersk": {
       "inputs": {
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
         "lastModified": 1679567394,
@@ -50,22 +50,6 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1653936696,
-        "narHash": "sha256-M6bJShji9AIDZ7Kh7CPwPBPb/T7RiVev2PAcOi4fxDQ=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "ce6aa13369b667ac2542593170993504932eb836",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "22.05",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
-      "locked": {
         "lastModified": 1683236849,
         "narHash": "sha256-Y7PNBVLOBvZrmrFmHgXUBUA1lM72tl6JGIn1trOeuyE=",
         "owner": "NixOS",
@@ -78,7 +62,7 @@
         "type": "indirect"
       }
     },
-    "nixpkgs_3": {
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1678470307,
         "narHash": "sha256-OEeMUr3ueLIXyW/OaFUX5jUdimyQwMg/7e+/Q0gC/QE=",
@@ -97,15 +81,15 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "naersk": "naersk",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1683763982,
-        "narHash": "sha256-+ai5kjafYUD0n26O26orCJ41YfVuCZm9J6ZoZgwH6Vk=",
+        "lastModified": 1684779059,
+        "narHash": "sha256-sAsAsmNif95FBh5udD1IH0oMEbdeVM7YlGDlCDA7zbo=",
         "owner": "reuron",
         "repo": "reuron",
-        "rev": "2afcd10b7d640101705af6d768d31b374828b860",
+        "rev": "04e86a05bd523c83036290dcef1a6507f8177bc4",
         "type": "github"
       },
       "original": {
@@ -116,7 +100,10 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": [
+          "reuron",
+          "nixpkgs"
+        ],
         "reuron": "reuron",
         "utils": "utils"
       }

@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = github:NixOS/nixpkgs/22.05;
+    nixpkgs.follows = "reuron/nixpkgs";
     utils.url = github:numtide/flake-utils;
     reuron.url = github:reuron/reuron;
   };
