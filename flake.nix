@@ -40,7 +40,6 @@
                                                     pkgsNew.lib.cleanSourceFilter path type
                                                 &&  (!((pkgsNew.lib.hasPrefix "result" (baseNameOf path) && type == "symlink")
                                                     || (pkgsNew.lib.hasSuffix ".nix" (baseNameOf path) && type == "regular")
-                                                    || (pkgsNew.lib.hasSuffix ".lock" (baseNameOf path) && type == "regular")
                                                     || (pkgsNew.lib.hasSuffix ".md" (baseNameOf path) && type == "regular")
                                                     || (baseNameOf path == "cabal.project.local" && type == "regular")
                                                     || (baseNameOf path == "dist" && type == "directory")

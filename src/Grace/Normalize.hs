@@ -457,9 +457,17 @@ apply (Value.Builtin NeuronScene)
 
     convertNeuronAndStimulator
       (Value.Record (HashMap.toList ->
-                  [("neuron", neuron)
-                  ,("stimulator_segments", stimulatorSegment)])) = Value.Record (HashMap.fromList [("neuron", neuron), ("stimulator_segments", stimulatorSegment)])
+                  [("neuron", neuron) -- TODO: It is strange that these fields need to be not-alphabetical.
+                  ,("location", location)
+                  ,("stimulator_segments", stimulatorSegment)])) =
+      Value.Record (HashMap.fromList
+                    [("location", location)
+                    , ("neuron", neuron)
+                    , ("stimulator_segments" , stimulatorSegment)
+                    ])
+    convertNeuronAndStimulator (Value.Record r) = error $ show $ HashMap.keys r
     convertNeuronAndStimulator x = error (show x)
+apply (Value.Builtin NeuronScene) (Value.Record x) = error $ show $ HashMap.keys x
 apply (Value.Builtin NeuronScene) x = error (show x)
 
 

@@ -1009,6 +1009,13 @@ sceneRecord location =
            [("neurons", List { type_ =
                                Record { fields = Fields
                                  [("neuron", neuron location)
+                                 ,("location", Record { fields = Fields [
+                                                          ("x_mm", real location),
+                                                          ("y_mm", real location),
+                                                          ("z_mm", real location)
+                                                          ] Monotype.EmptyFields
+                                                      , ..
+                                                      })
                                  ,("stimulator_segments", List { type_ = stimulatorSegment location, .. })
                                  ] Monotype.EmptyFields
                                , .. }
