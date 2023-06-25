@@ -339,6 +339,18 @@ apply
     go 0 !result = result
     go m !result = go (m - 1) (apply succ result)
 apply
+    (Value.Application
+        (Value.Builtin NaturalEqual)
+        (Value.Scalar (Natural m))
+    )
+    (Value.Scalar (Natural n)) = Value.Scalar (Bool $ m == n)
+apply
+    (Value.Application
+        (Value.Builtin NaturalMod)
+        (Value.Scalar (Natural m))
+    )
+    (Value.Scalar (Natural n)) = Value.Scalar (Natural $ m `mod` n)
+apply
     (Value.Builtin NeuronIonLevels) ionsRecord
      = ionsRecord
 apply

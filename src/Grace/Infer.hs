@@ -1849,6 +1849,18 @@ infer e0 = do
                 , ..
                 }
 
+        Syntax.Builtin{ builtin = Syntax.NaturalEqual, .. } -> do
+            return ( Type.Scalar{ scalar = Monotype.Natural, .. }
+                    ~>  (Type.Scalar {scalar = Monotype.Natural, ..}
+                     ~> Type.Scalar { scalar = Monotype.Bool, .. })
+                   )
+
+        Syntax.Builtin{ builtin = Syntax.NaturalMod, .. } -> do
+            return ( Type.Scalar{ scalar = Monotype.Natural, .. }
+                    ~>  (Type.Scalar {scalar = Monotype.Natural, ..}
+                     ~> Type.Scalar { scalar = Monotype.Natural, .. })
+                   )
+
         Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, location } -> do
           return $ Type.ionsRecord location ~> Type.json location
 

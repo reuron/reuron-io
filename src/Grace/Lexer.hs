@@ -126,6 +126,8 @@ parseToken =
             , IntegerToReal  <$ symbol "Integer/toReal"
             , JSONFold       <$ symbol "JSON/fold"
             , NaturalFold    <$ symbol "Natural/fold"
+            , NaturalEqual    <$ symbol "Natural/equal"
+            , NaturalMod    <$ symbol "Natural/mod"
             , NeuronIonLevels <$ symbol "Neuron/ions"
             , NeuronGating <$ symbol "Neuron/gating"
             , NeuronChannel <$ symbol "Neuron/channel"
@@ -347,6 +349,8 @@ reserved =
         , "List/take"
         , "Natural"
         , "Natural/fold"
+        , "Natural/equal"
+        , "Natural/mod"
         , "Neuron/ions"
         , "Neuron/gating"
         , "Neuron/channel"
@@ -489,6 +493,8 @@ data Token
     | Merge
     | Natural
     | NaturalFold
+    | NaturalEqual
+    | NaturalMod
     | NeuronIonLevels
     | NeuronGating
     | NeuronChannel
