@@ -387,6 +387,9 @@ apply
     )
     (Value.Scalar (Natural n)) = Value.Scalar (Natural $ m `mod` n)
 apply
+    (Value.Builtin NaturalToInteger)
+    (Value.Scalar (Natural n)) = Value.Scalar (Integer (fromIntegral n))
+apply
     (Value.Builtin NeuronIonLevels) ionsRecord
      = ionsRecord
 apply

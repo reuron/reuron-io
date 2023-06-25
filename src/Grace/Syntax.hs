@@ -395,6 +395,10 @@ data Builtin
     -- ^
     --   >>> pretty NaturalMod
     --   Natural/mod
+    | NaturalToInteger
+    -- ^
+    --   >>> pretty NaturalToInteger
+    --   Natural/toInteger
     | NeuronIonLevels
     -- ^
     --   >>> pretty NeuronIonLevels
@@ -456,6 +460,7 @@ instance Pretty Builtin where
     pretty NaturalFold    = Pretty.builtin "Natural/fold"
     pretty NaturalEqual    = Pretty.builtin "Natural/equal"
     pretty NaturalMod      = Pretty.builtin "Natural/mod"
+    pretty NaturalToInteger = Pretty.builtin "Natural/toInteger"
     pretty NeuronIonLevels = Pretty.builtin "Neuron/ions"
     pretty NeuronGating = Pretty.builtin "Neuron/gating"
     pretty NeuronChannel = Pretty.builtin "Neuron/channel"

@@ -130,6 +130,7 @@ parseToken =
             , NaturalFold    <$ symbol "Natural/fold"
             , NaturalEqual    <$ symbol "Natural/equal"
             , NaturalMod    <$ symbol "Natural/mod"
+            , NaturalToInteger <$ symbol "Natural/toInteger"
             , NeuronIonLevels <$ symbol "Neuron/ions"
             , NeuronGating <$ symbol "Neuron/gating"
             , NeuronChannel <$ symbol "Neuron/channel"
@@ -353,6 +354,7 @@ reserved =
         , "Natural/fold"
         , "Natural/equal"
         , "Natural/mod"
+        , "Natural/toInteger"
         , "Neuron/ions"
         , "Neuron/gating"
         , "Neuron/channel"
@@ -499,6 +501,7 @@ data Token
     | NaturalFold
     | NaturalEqual
     | NaturalMod
+    | NaturalToInteger
     | NeuronIonLevels
     | NeuronGating
     | NeuronChannel

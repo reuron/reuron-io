@@ -205,6 +205,7 @@ render t = case t of
     Lexer.NaturalFold      -> "Natural/fold"
     Lexer.NaturalEqual     -> "Natural/equal"
     Lexer.NaturalMod       -> "Natural/mod"
+    Lexer.NaturalToInteger -> "Natural/toInteger"
     Lexer.NeuronIonLevels  -> "Neuron/ions"
     Lexer.NeuronGating     -> "Neuron/gating"
     Lexer.NeuronChannel    -> "Neuron/channel"
@@ -489,6 +490,10 @@ grammar = mdo
         <|> do  location <- locatedToken Lexer.NaturalMod
 
                 return Syntax.Builtin{ builtin = Syntax.NaturalMod, .. }
+
+        <|> do  location <- locatedToken Lexer.NaturalToInteger
+
+                return Syntax.Builtin{ builtin = Syntax.NaturalToInteger, .. }
 
         <|> do  location <- locatedToken Lexer.NeuronIonLevels
 
