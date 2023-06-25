@@ -243,6 +243,42 @@ evaluate env syntax =
             left'  = evaluate env left
             right' = evaluate env right
 
+        Syntax.Operator{ operator = Syntax.Minus, .. } ->
+            case (left', right') of
+                (Value.Scalar l, Value.Scalar r)
+                    | Natural m <- l
+                    , Natural n <- r ->
+                        Value.Scalar (Natural (m - n))
+                    | Just m <- asInteger l
+                    , Just n <- asInteger r ->
+                        Value.Scalar (Integer (m - n))
+                    | Just m <- asReal l
+                    , Just n <- asReal r ->
+                        Value.Scalar (Real (m - n))
+                _ ->
+                    Value.Operator left' Syntax.Minus right'
+          where
+            left'  = evaluate env left
+            right' = evaluate env right
+
+        Syntax.Operator{ operator = Syntax.Divide, .. } ->
+            case (left', right') of
+                (Value.Scalar l, Value.Scalar r)
+                    | Natural m <- l
+                    , Natural n <- r ->
+                        Value.Scalar (Natural (div m n))
+                    | Just m <- asInteger l
+                    , Just n <- asInteger r ->
+                        Value.Scalar (Integer (div m n))
+                    | Just m <- asReal l
+                    , Just n <- asReal r ->
+                        Value.Scalar (Real (m / n))
+                _ ->
+                    Value.Operator left' Syntax.Minus right'
+          where
+            left'  = evaluate env left
+            right' = evaluate env right
+
         Syntax.Builtin{ builtin = RealPi } -> Value.Scalar (Real 3.14159)
         Syntax.Builtin{..} ->
             Value.Builtin builtin

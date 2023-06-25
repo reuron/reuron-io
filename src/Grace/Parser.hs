@@ -156,6 +156,7 @@ render t = case t of
     Lexer.Colon            -> ":"
     Lexer.Comma            -> ","
     Lexer.Dash             -> "-"
+    Lexer.Divide           -> "/"
     Lexer.Dot              -> "."
     Lexer.Real             -> "Real"
     Lexer.RealLiteral _    -> "a real number literal"
@@ -199,6 +200,7 @@ render t = case t of
     Lexer.ListReverse      -> "List/reverse"
     Lexer.ListTake         -> "List/take"
     Lexer.Merge            -> "merge"
+    Lexer.Minus            -> "-"
     Lexer.Natural          -> "Natural"
     Lexer.NaturalFold      -> "Natural/fold"
     Lexer.NaturalEqual     -> "Natural/equal"
@@ -286,7 +288,11 @@ grammar = mdo
 
     timesExpression <- rule (op Lexer.Times Syntax.Times plusExpression)
 
-    plusExpression <- rule (op Lexer.Plus Syntax.Plus orExpression)
+    plusExpression <- rule (op Lexer.Plus Syntax.Plus minusExpression)
+
+    minusExpression <- rule (op Lexer.Minus Syntax.Minus divideExpression)
+
+    divideExpression <- rule (op Lexer.Divide Syntax.Divide orExpression)
 
     orExpression <- rule (op Lexer.Or Syntax.Or andExpression)
 

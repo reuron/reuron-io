@@ -84,7 +84,9 @@ parseToken =
             [ Or     <$ symbol "||"
             , And    <$ symbol "&&"
             , Plus   <$ symbol "+"
+            , Minus  <$ symbol "-"
             , Times  <$ symbol "*"
+            , Divide <$ symbol "%"
             ] <?> "operator"
 
         , Combinators.choice
@@ -448,6 +450,7 @@ data Token
     | Colon
     | Comma
     | Dash
+    | Divide
     | Dot
     | Real
     | RealEqual
@@ -491,6 +494,7 @@ data Token
     | ListReverse
     | ListTake
     | Merge
+    | Minus
     | Natural
     | NaturalFold
     | NaturalEqual

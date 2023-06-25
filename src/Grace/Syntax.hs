@@ -271,6 +271,14 @@ data Operator
     -- ^
     --   >>> pretty Times
     --   *
+    | Minus
+    -- ^
+    --   >>> pretty Minus
+    --   -
+    | Divide
+    -- ^
+    --   >>> pretty Divide
+    --   /
     deriving (Eq, Generic, Lift, Show)
 
 instance Pretty Operator where
@@ -278,6 +286,8 @@ instance Pretty Operator where
     pretty Or     = Pretty.operator "||"
     pretty Plus   = Pretty.operator "+"
     pretty Times  = Pretty.operator "*"
+    pretty Minus  = Pretty.operator "-"
+    pretty Divide = Pretty.operator "/"
 
 -- | A built-in function
 data Builtin

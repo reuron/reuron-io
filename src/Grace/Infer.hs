@@ -1542,6 +1542,44 @@ infer e0 = do
                 _ -> do
                     throwError (InvalidOperands (Syntax.location left) _L')
 
+        Syntax.Operator{ operator = Syntax.Minus, .. } -> do
+            _L <- infer left
+            _R <- infer right
+
+            check left  _R
+            check right _L
+
+            _Γ <- get
+
+            let _L' = Context.solveType _Γ _L
+
+            case _L' of
+                Type.Scalar{ scalar = Monotype.Natural } -> return _L
+                Type.Scalar{ scalar = Monotype.Integer } -> return _L
+                Type.Scalar{ scalar = Monotype.Real    } -> return _L
+
+                _ -> do
+                    throwError (InvalidOperands (Syntax.location left) _L')
+
+        Syntax.Operator{ operator = Syntax.Divide, .. } -> do
+            _L <- infer left
+            _R <- infer right
+
+            check left  _R
+            check right _L
+
+            _Γ <- get
+
+            let _L' = Context.solveType _Γ _L
+
+            case _L' of
+                Type.Scalar{ scalar = Monotype.Natural } -> return _L
+                Type.Scalar{ scalar = Monotype.Integer } -> return _L
+                Type.Scalar{ scalar = Monotype.Real    } -> return _L
+
+                _ -> do
+                    throwError (InvalidOperands (Syntax.location left) _L')
+
         Syntax.Builtin{ builtin = Syntax.RealEqual, .. }-> do
             return
                 (   Type.Scalar{ scalar = Monotype.Real, .. }
@@ -1983,7 +2021,20 @@ check Syntax.Operator{ operator = Syntax.Plus, .. } _B@Type.List{} = do
     _Γ <- get
 
     check right (Context.solveType _Γ _B)
+check Syntax.Operator{ operator = Syntax.Minus, .. } _B@Type.Scalar{ scalar }
+    | scalar `elem` ([ Monotype.Natural, Monotype.Integer, Monotype.Real ] :: [Monotype.Scalar]) = do
+    check left _B
 
+    _Γ <- get
+
+    check right (Context.solveType _Γ _B)
+check Syntax.Operator{ operator = Syntax.Divide, .. } _B@Type.Scalar{ scalar }
+    | scalar `elem` ([ Monotype.Natural, Monotype.Integer, Monotype.Real ] :: [Monotype.Scalar]) = do
+    check left _B
+
+    _Γ <- get
+
+    check right (Context.solveType _Γ _B)
 check Syntax.List{ location = _, ..} Type.List{..} = do
     let process element = do
             _Γ <- get
