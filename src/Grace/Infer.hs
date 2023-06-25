@@ -1570,6 +1570,22 @@ infer e0 = do
                 ~>  Type.Scalar{ scalar = Monotype.Text, .. }
                 )
 
+        Syntax.Builtin{ builtin = Syntax.RealSin, .. } -> do
+            return
+                (   Type.Scalar{ scalar = Monotype.Real, .. }
+                ~>  Type.Scalar{ scalar = Monotype.Real, .. }
+                )
+
+        Syntax.Builtin{ builtin = Syntax.RealCos, .. } -> do
+            return
+                (   Type.Scalar{ scalar = Monotype.Real, .. }
+                ~>  Type.Scalar{ scalar = Monotype.Real, .. }
+                )
+
+        Syntax.Builtin{ builtin = Syntax.RealPi, .. } -> do
+            return
+                (   Type.Scalar{ scalar = Monotype.Real, .. } )
+
         Syntax.Builtin{ builtin = Syntax.ListDrop, .. } -> do
             return Type.Forall
                 { nameLocation = Syntax.location e0
@@ -1752,6 +1768,12 @@ infer e0 = do
             return
                 (   Type.Scalar{ scalar = Monotype.Integer, .. }
                 ~>  Type.Scalar{ scalar = Monotype.Bool, .. }
+                )
+
+        Syntax.Builtin{ builtin = Syntax.IntegerToReal, .. } -> do
+            return
+                (   Type.Scalar{ scalar = Monotype.Integer, .. }
+                ~>  Type.Scalar{ scalar = Monotype.Real, .. }
                 )
 
         Syntax.Builtin{ builtin = Syntax.ListReverse, .. } -> do

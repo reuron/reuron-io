@@ -297,6 +297,18 @@ data Builtin
     -- ^
     --   >>> pretty RealShow
     --   Real/show
+    | RealCos
+    -- ^
+    --   >>> pretty RealCos
+    --   Real/cos
+    | RealSin
+    -- ^
+    --   >>> pretty RealSin
+    --   Real/sin
+    | RealPi
+    -- ^
+    --   >>> pretty RealPi
+    --   Real/pi
     | ListDrop
     -- ^
     --   >>> pretty ListDrop
@@ -353,6 +365,10 @@ data Builtin
     -- ^
     --   >>> pretty IntegerAbs
     --   Integer/abs
+    | IntegerToReal
+    -- ^
+    --   >>> pretty IntegerToReal
+    --   Integer/toReal
     | JSONFold
     -- ^
     --   >>> pretty JSONFold
@@ -400,10 +416,14 @@ instance Pretty Builtin where
     pretty RealLessThan   = Pretty.builtin "Real/lessThan"
     pretty RealNegate     = Pretty.builtin "Real/negate"
     pretty RealShow       = Pretty.builtin "Real/show"
+    pretty RealCos        = Pretty.builtin "Real/cos"
+    pretty RealSin        = Pretty.builtin "Real/sin"
+    pretty RealPi         = Pretty.builtin "Real/pi"
     pretty IntegerAbs     = Pretty.builtin "Integer/abs"
     pretty IntegerEven    = Pretty.builtin "Integer/even"
     pretty IntegerNegate  = Pretty.builtin "Integer/negate"
     pretty IntegerOdd     = Pretty.builtin "Integer/odd"
+    pretty IntegerToReal  = Pretty.builtin "Integer/toReal"
     pretty JSONFold       = Pretty.builtin "JSON/fold"
     pretty ListDrop       = Pretty.builtin "List/drop"
     pretty ListEqual      = Pretty.builtin "List/equal"

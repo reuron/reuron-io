@@ -3,6 +3,7 @@
 {-# LANGUAGE OverloadedLists   #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE ViewPatterns      #-}
 
 -- | This module contains the logic for efficiently evaluating an expression
@@ -13,7 +14,7 @@ module Grace.Normalize
     , apply
     ) where
 
-import Data.Scientific (Scientific)
+import Data.Scientific (Scientific, fromFloatDigits, toRealFloat)
 import Data.Sequence (Seq(..), ViewL(..))
 import Data.Text (Text)
 import Data.Void (Void)
@@ -242,6 +243,7 @@ evaluate env syntax =
             left'  = evaluate env left
             right' = evaluate env right
 
+        Syntax.Builtin{ builtin = RealPi } -> Value.Scalar (Real 3.14159)
         Syntax.Builtin{..} ->
             Value.Builtin builtin
 
@@ -493,12 +495,18 @@ apply (Value.Builtin RealNegate) (Value.Scalar x)
     | Just n <- asReal x = Value.Scalar (Real (negate n))
 apply (Value.Builtin IntegerNegate) (Value.Scalar x)
     | Just n <- asInteger x = Value.Scalar (Integer (negate n))
+apply (Value.Builtin IntegerToReal) (Value.Scalar x)
+    | Just n <- asInteger x = Value.Scalar (Real (fromIntegral n))
 apply (Value.Builtin RealShow) (Value.Scalar (Natural n)) =
     Value.Scalar (Text (Text.pack (show n)))
 apply (Value.Builtin RealShow) (Value.Scalar (Integer n)) =
     Value.Scalar (Text (Text.pack (show n)))
 apply (Value.Builtin RealShow) (Value.Scalar (Real n)) =
     Value.Scalar (Text (Text.pack (show n)))
+apply (Value.Builtin RealSin) (Value.Scalar (Real n)) =
+    Value.Scalar (Real (fromFloatDigits @Double (sin (toRealFloat n))))
+apply (Value.Builtin RealCos) (Value.Scalar (Real n)) =
+    Value.Scalar (Real (fromFloatDigits @Double (cos (toRealFloat n))))
 apply
     (Value.Application (Value.Builtin TextEqual) (Value.Scalar (Text l)))
     (Value.Scalar (Text r)) =

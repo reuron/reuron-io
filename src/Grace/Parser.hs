@@ -163,6 +163,9 @@ render t = case t of
     Lexer.RealLessThan     -> "Real/lessThan"
     Lexer.RealNegate       -> "Real/negate"
     Lexer.RealShow         -> "Real/show"
+    Lexer.RealCos          -> "Real/cos"
+    Lexer.RealSin          -> "Real/sin"
+    Lexer.RealPi           -> "Real/pi"
     Lexer.Else             -> "else"
     Lexer.Equals           -> "="
     Lexer.Exists           -> "exists"
@@ -178,6 +181,7 @@ render t = case t of
     Lexer.IntegerEven      -> "Integer/even"
     Lexer.IntegerNegate    -> "Integer/negate"
     Lexer.IntegerOdd       -> "Integer/odd"
+    Lexer.IntegerToReal    -> "Integer/toReal"
     Lexer.JSON             -> "JSON"
     Lexer.JSONFold         -> "JSON/fold"
     Lexer.Label _          -> "a label"
@@ -390,6 +394,18 @@ grammar = mdo
 
                 return Syntax.Builtin{ builtin = Syntax.RealShow, .. }
 
+        <|> do  location <- locatedToken Lexer.RealSin
+
+                return Syntax.Builtin{ builtin = Syntax.RealSin, .. }
+
+        <|> do  location <- locatedToken Lexer.RealCos
+
+                return Syntax.Builtin{ builtin = Syntax.RealCos, .. }
+
+        <|> do  location <- locatedToken Lexer.RealPi
+
+                return Syntax.Builtin{ builtin = Syntax.RealPi, .. }
+
         <|> do  location <- locatedToken Lexer.ListDrop
 
                 return Syntax.Builtin{ builtin = Syntax.ListDrop, .. }
@@ -445,6 +461,10 @@ grammar = mdo
         <|> do  location <- locatedToken Lexer.IntegerOdd
 
                 return Syntax.Builtin{ builtin = Syntax.IntegerOdd, .. }
+
+        <|> do  location <- locatedToken Lexer.IntegerToReal
+
+                return Syntax.Builtin{ builtin = Syntax.IntegerToReal, .. }
 
         <|> do  location <- locatedToken Lexer.JSONFold
 

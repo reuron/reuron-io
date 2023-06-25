@@ -106,6 +106,9 @@ parseToken =
             , RealLessThan   <$ symbol "Real/lessThan"
             , RealNegate     <$ symbol "Real/negate"
             , RealShow       <$ symbol "Real/show"
+            , RealSin        <$ symbol "Real/sin"
+            , RealCos        <$ symbol "Real/cos"
+            , RealPi         <$ symbol "Real/pi"
             , ListDrop       <$ symbol "List/drop"
             , ListEqual      <$ symbol "List/equal"
             , ListFold       <$ symbol "List/fold"
@@ -120,6 +123,7 @@ parseToken =
             , IntegerEven    <$ symbol "Integer/even"
             , IntegerNegate  <$ symbol "Integer/negate"
             , IntegerOdd     <$ symbol "Integer/odd"
+            , IntegerToReal  <$ symbol "Integer/toReal"
             , JSONFold       <$ symbol "JSON/fold"
             , NaturalFold    <$ symbol "Natural/fold"
             , NeuronIonLevels <$ symbol "Neuron/ions"
@@ -320,12 +324,16 @@ reserved =
         , "Real/lessThan"
         , "Real/negate"
         , "Real/show"
+        , "Real/sin"
+        , "Real/cos"
+        , "Real/pi"
         , "Fields"
         , "Integer"
         , "Integer/abs"
         , "Integer/even"
         , "Integer/negate"
         , "Integer/odd"
+        , "Integer/toReal"
         , "JSON/fold"
         , "List"
         , "List/drop"
@@ -443,6 +451,9 @@ data Token
     | RealLiteral Scientific
     | RealNegate
     | RealShow
+    | RealSin
+    | RealCos
+    | RealPi
     | Else
     | Equals
     | Exists
@@ -458,6 +469,7 @@ data Token
     | IntegerEven
     | IntegerNegate
     | IntegerOdd
+    | IntegerToReal
     | JSON
     | JSONFold
     | Label Text
