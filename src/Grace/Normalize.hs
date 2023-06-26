@@ -502,8 +502,11 @@ apply (Value.Builtin NeuronStimulator) x = error (show x) -- TODO
 apply (Value.Builtin NeuronScene)
   (Value.Record
   (List.sortBy (Ord.comparing fst) . HashMap.toList ->
-   [("neurons", neurons)])) =
-  Value.NeuronScene $ Value.Record (HashMap.fromList [("neurons", convertNeurons neurons)])
+   [("neurons", neurons), ("synapses", synapses)])) =
+  Value.NeuronScene $ Value.Record (HashMap.fromList
+                                    [ ("neurons", convertNeurons neurons)
+                                    , ("synapses", synapses)
+                                    ])
   where
     convertNeurons (Value.List neuronsAndStimulators) = Value.List (convertNeuronAndStimulator <$> neuronsAndStimulators)
     convertNeurons x = error (show x)

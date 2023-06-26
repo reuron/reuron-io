@@ -1020,7 +1020,7 @@ sceneRecord location =
                                  ] Monotype.EmptyFields
                                , .. }
                              , .. })
-           -- ,("synapses", synapses location) -- TODO: Implement synapses.
+           ,("synapses", List { type_ = real location, .. }) -- TODO: Implement synapses.
            ] Monotype.EmptyFields, .. }
 
 stimulatorSegment :: loc -> Type loc
