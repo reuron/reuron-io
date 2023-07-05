@@ -92,6 +92,7 @@ parseSwcLines swcBytes = mapMaybe parseLine (LBS.lines swcBytes)
           }
         _ -> Nothing -- error "bad line"
 
+
 encodeSwcLines :: [SwcLine] -> Builder.Builder
 encodeSwcLines swcLines =
   header
