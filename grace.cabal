@@ -57,7 +57,7 @@ library
 
   default-language:    Haskell2010
 
-  ghc-options:         -Wall -dynamic
+  ghc-options:         -dynamic -Wall
 
   if impl(ghcjs)
     hs-source-dirs:    ghcjs
@@ -90,6 +90,7 @@ executable grace
   hs-source-dirs:      grace
 
   default-language:    Haskell2010
+  ghc-options:         -dynamic
   if impl(ghcjs)
     buildable:         False
 
