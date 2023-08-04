@@ -119,11 +119,13 @@
                 graceMinimal =
                   pkgs.haskell.lib.justStaticExecutables
                     (grace.overrideAttrs (_: { doCheck = false; }));
+                sharedLib =
+                  grace.overrideAttrs(_: { configureFlags = ["-fdynamic"]; });
 
                 website = pkgs.website;
                 reuron-io-static = pkgs.reuron-io-static;
              in
-            { inherit grace graceMinimal website reuron-io-static pkgs; };
+            { inherit grace graceMinimal sharedLib website reuron-io-static pkgs; };
 
           withDefaultCompiler = withCompiler "ghc902";
           withghcjs = withCompiler "ghcjs";
@@ -131,6 +133,7 @@
       rec {
         packages = {
           default = withDefaultCompiler.graceMinimal;
+          sharedLib = withDefaultCompiler.sharedLib;
           website = withghcjs.website;
           reuron-io-static = withghcjs.reuron-io-static;
         };
