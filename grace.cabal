@@ -57,7 +57,7 @@ library
 
   default-language:    Haskell2010
 
-  ghc-options:         -Wall
+  ghc-options:         -Wall -dynamic
 
   if impl(ghcjs)
     hs-source-dirs:    ghcjs
