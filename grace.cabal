@@ -33,6 +33,7 @@ library
   exposed-modules:     Grace.Context
                      , Grace.Domain
                      , Grace.Existential
+                     , Grace.FFI
                      , Grace.Input
                      , Grace.Import
                      , Grace.Interpret

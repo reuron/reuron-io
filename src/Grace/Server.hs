@@ -5,6 +5,7 @@
 
 module Grace.Server where
 
+import Control.Exception.Safe (displayException)
 import qualified Control.Monad.Except as Except
 import qualified Data.Text.Encoding as Text
 import qualified Data.List as List
@@ -39,7 +40,9 @@ serve port = Warp.run port $ Cors.simpleCors $ \req respond ->
       input <- Code "request" . Text.decodeUtf8 . LBS.toStrict <$> Wai.strictRequestBody req
       eitherResult <- Except.runExceptT (Interpret.interpret input)
       case eitherResult of
-        Left e -> respond $ Wai.responseLBS HTTP.status400 [] (LBS.pack (show e))
+        Left e -> do
+          putStrLn (displayException e)
+          respond $ Wai.responseLBS HTTP.status400 [] (LBS.pack (displayException e))
         Right (_ty, value) -> do
           let syntax = Normalize.quote [] value
           let response = Pretty.toText syntax
