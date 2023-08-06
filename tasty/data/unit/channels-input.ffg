@@ -1,0 +1,15 @@
+{ test1: Neuron/channel {
+    ion_selectivity: {na: 0.1, k: 1.0, cl: 0.0, ca: 0.0},
+    activation: null,
+    inctivation: {
+      gates: 1,
+      magnitude: {v_at_half_max_mv: -82.0, slope: -9.0},
+      time_constant: Sigmoid {
+        v_at_max_tau_mv: -75.0,
+        c_base: 10e-3,
+        c_amp: 50e-3,
+        sigma: 20.0
+      }
+    }
+  }
+}

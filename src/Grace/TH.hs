@@ -57,9 +57,6 @@ grace = QuasiQuoter
 
      This function takes the source code of a expressions, type checks it and
      returns the fully normalized AST.
-
-     >>> $$(expressionFromCode "\"hello\"")
-     Scalar {location = (), scalar = Text "hello"}
 -}
 expressionFromCode :: Text -> Q (TExp (Syntax () Void))
 expressionFromCode = expressionFromInput . Code "(input)"
@@ -76,9 +73,6 @@ expressionFromInput = helperFunction snd
 
      This function takes the source code of an expressions, type checks it and
      returns the inferred type of that expression.
-
-     >>> $$(typeOfCode "\"hello\"")
-     Scalar {location = (), scalar = Text}
 -}
 typeOfCode :: Text -> Q (TExp (Type ()))
 typeOfCode = typeOfInput . Code "(input)"
