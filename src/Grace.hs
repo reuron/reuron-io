@@ -13,6 +13,7 @@ module Grace
 
 import Control.Applicative (many, (<|>))
 import Control.Exception.Safe (Exception(..))
+import qualified Data.Aeson as Aeson
 import Data.Foldable (traverse_)
 import Data.Functor (void)
 import Data.Void (Void)
@@ -56,7 +57,11 @@ data Highlight
     --   @stdout@ is a terminal
 
 data Options
-    = Interpret { annotate :: Bool, highlight :: Highlight, file :: FilePath }
+    = Interpret
+      { annotate :: Bool
+      , highlight :: Highlight
+      , file :: FilePath
+      }
     | Text { file :: FilePath }
     | Format { highlight :: Highlight, files :: [FilePath] }
     | Builtins { highlight :: Highlight }
@@ -210,8 +215,15 @@ main = do
                         syntax
 
             render <- getRender highlight
+            if annotate
+              then
+                print $ Aeson.object
+                    [ "value" Aeson..= show (Grace.Pretty.pretty syntax)
+                    , "type" Aeson..= show (Grace.Pretty.pretty inferred)
+                    ]
+              else
 
-            render (Grace.Pretty.pretty annotatedExpression <> Pretty.hardline)
+                render (Grace.Pretty.pretty annotatedExpression <> Pretty.hardline)
 
         Text{..} -> do
             input <- case file of
