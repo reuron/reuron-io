@@ -14,6 +14,7 @@ module Grace
 import Control.Applicative (many, (<|>))
 import Control.Exception.Safe (Exception(..))
 import qualified Data.Aeson as Aeson
+import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Foldable (traverse_)
 import Data.Functor (void)
 import Data.Void (Void)
@@ -217,7 +218,7 @@ main = do
             render <- getRender highlight
             if annotate
               then
-                print $ Aeson.object
+                BS.putStrLn $ Aeson.encode $ Aeson.object
                     [ "value" Aeson..= show (Grace.Pretty.pretty syntax)
                     , "type" Aeson..= show (Grace.Pretty.pretty inferred)
                     ]
