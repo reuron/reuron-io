@@ -149,6 +149,7 @@ render t = case t of
     Lexer.At               -> "@"
     Lexer.Bar              -> "|"
     Lexer.Bool             -> "Bool"
+    Lexer.Channel          -> "Channel"
     Lexer.CloseAngle       -> ">"
     Lexer.CloseBrace       -> "}"
     Lexer.CloseBracket     -> "]"
@@ -199,6 +200,7 @@ render t = case t of
     Lexer.ListMap          -> "List/map"
     Lexer.ListReverse      -> "List/reverse"
     Lexer.ListTake         -> "List/take"
+    Lexer.Membrane         -> "Membrane"
     Lexer.Merge            -> "merge"
     Lexer.Minus            -> "-"
     Lexer.Natural          -> "Natural"
@@ -206,6 +208,7 @@ render t = case t of
     Lexer.NaturalEqual     -> "Natural/equal"
     Lexer.NaturalMod       -> "Natural/mod"
     Lexer.NaturalToInteger -> "Natural/toInteger"
+    Lexer.Neuron           -> "Neuron"
     Lexer.NeuronIonLevels  -> "Neuron/ions"
     Lexer.NeuronGating     -> "Neuron/gating"
     Lexer.NeuronChannel    -> "Neuron/channel"
@@ -221,6 +224,7 @@ render t = case t of
     Lexer.Optional         -> "List"
     Lexer.Or               -> "||"
     Lexer.Plus             -> "+"
+    Lexer.Scene            -> "Scene"
     Lexer.Text             -> "Text"
     Lexer.TextEqual        -> "Text/equal"
     Lexer.TextLiteral _    -> "a text literal"
@@ -638,6 +642,14 @@ grammar = mdo
     primitiveType <- rule
         (   do  location <- locatedToken Lexer.Bool
                 return Type.Scalar{ scalar = Monotype.Bool, .. }
+        <|> do  location <- locatedToken Lexer.Channel
+                return Type.Scalar{ scalar = Monotype.NeuronChannel, .. }
+        <|> do  location <- locatedToken Lexer.Neuron
+                return Type.Scalar{ scalar = Monotype.NeuronNeuron, .. }
+        <|> do  location <- locatedToken Lexer.Membrane
+                return Type.Scalar{ scalar = Monotype.NeuronMembrane, .. }
+        <|> do  location <- locatedToken Lexer.Scene
+                return Type.Scalar{ scalar = Monotype.NeuronScene, .. }
         <|> do  location <- locatedToken Lexer.Real
                 return Type.Scalar{ scalar = Monotype.Real, .. }
         <|> do  location <- locatedToken Lexer.Integer

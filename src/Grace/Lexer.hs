@@ -152,6 +152,10 @@ parseToken =
             , Natural  <$ symbol "Natural"
             , Bool     <$ symbol "Bool"
             , Text     <$ symbol "Text"
+            , Channel  <$ symbol "Channel"
+            , Neuron   <$ symbol "Neuron"
+            , Membrane <$ symbol "Membrane"
+            , Scene    <$ symbol "Scene"
             ] <?> "built-in type"
 
         , OpenAngle        <$ symbol "<"
@@ -326,6 +330,7 @@ reserved =
     HashSet.fromList
         [ "Alternatives"
         , "Bool"
+        , "Channel"
         , "Real"
         , "Real/equal"
         , "Real/lessThan"
@@ -352,15 +357,18 @@ reserved =
         , "List/map"
         , "List/reverse"
         , "List/take"
+        , "Membrane"
         , "Natural"
         , "Natural/fold"
         , "Natural/equal"
         , "Natural/mod"
         , "Natural/toInteger"
+        , "Neuron"
         , "Neuron/ions"
         , "Neuron/gating"
         , "Neuron/channel"
         , "Optional"
+        , "Scene"
         , "Text"
         , "Text/equal"
         , "Type"
@@ -447,6 +455,7 @@ data Token
     | At
     | Bar
     | Bool
+    | Channel
     | CloseAngle
     | CloseBrace
     | CloseBracket
@@ -497,6 +506,7 @@ data Token
     | ListMap
     | ListReverse
     | ListTake
+    | Membrane
     | Merge
     | Minus
     | Natural
@@ -504,6 +514,7 @@ data Token
     | NaturalEqual
     | NaturalMod
     | NaturalToInteger
+    | Neuron
     | NeuronIonLevels
     | NeuronGating
     | NeuronChannel
@@ -519,6 +530,7 @@ data Token
     | Optional
     | Or
     | Plus
+    | Scene
     | Text
     | TextEqual
     | TextLiteral Text
