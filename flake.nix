@@ -120,7 +120,7 @@
                   pkgs.haskell.lib.justStaticExecutables
                     (grace.overrideAttrs (_: { doCheck = false; }));
                 sharedLib =
-                  grace.overrideAttrs(_: { configureFlags = ["-fdynamic"]; });
+                  grace.overrideAttrs(_: { doCheck = false; configureFlags = ["-fdynamic"]; });
 
                 website = pkgs.website;
                 reuron-io-static = pkgs.reuron-io-static;
