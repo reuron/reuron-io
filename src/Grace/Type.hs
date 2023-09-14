@@ -1002,6 +1002,40 @@ frequencyRampRecord location =
            ,("end_frequency_hz", real location)
            ] Monotype.EmptyFields, .. }
 
+synapseRecord :: loc -> Type loc
+synapseRecord location =
+  Record { fields = Fields
+         [ ("pre_neuron", natural location)
+         , ("pre_segment", natural location)
+         , ("post_neuron", natural location)
+         , ("post_segment", natural location)
+         , ("synapse_membranes", List { type_ = synapseMembraneRecord location, .. } )
+         ] Monotype.EmptyFields, ..}
+
+synapseMembraneRecord :: loc -> Type loc
+synapseMembraneRecord location =
+  Record { fields = Fields
+           [ ("cleft_solution", ionsRecord location)
+           , ("transmitter_concentration", Record { fields = Fields
+                                                    [("glutamate_molar", real location)
+                                                    ,("gaba_molar", real location)
+                                                    ] Monotype.EmptyFields, .. })
+           , ("presynaptic_pumps", List { type_ = transmitterPumpRecord location, .. })
+           ] Monotype.EmptyFields, .. }
+
+transmitterPumpRecord :: loc -> Type loc
+transmitterPumpRecord location =
+  Record { fields = Fields
+           [("transmitter", undefined)
+           ,("transmitter_params", transmitterPumpParamsRecord location)
+           ] Monotype.EmptyFields, .. }
+
+transmitterPumpParamsRecord :: loc -> Type loc
+transmitterPumpParamsRecord location =
+  Record { fields = Fields
+           [("target_concentration", )
+           ,("transmitter_params", transmitterParamsRecord location)
+           ] Monotype.EmptyFields, .. }
 
 sceneRecord :: loc -> Type loc
 sceneRecord location =
@@ -1054,6 +1088,9 @@ neuron location = Scalar {  scalar = Monotype.NeuronNeuron, ..  }
 
 stimulator :: loc -> Type loc
 stimulator location = Scalar {  scalar = Monotype.NeuronStimulator, ..  }
+
+synapse :: loc -> Type loc
+synapse location = Scalar { scalar = Monotype.NeuronSynapse }
 
 scene :: loc -> Type loc
 scene location = Scalar {  scalar = Monotype.NeuronScene, ..  }
