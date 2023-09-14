@@ -41,12 +41,22 @@ module Grace.Type
     , gatingRecord
     , timeConstant
     , magnitudeRecord
-    , sigmoidRecord
+    , vSigmoidRecord
     , linearExpRecord
     , membraneRecord
     , neuronRecord
     , stimulatorRecord
+
+    , synapseRecord
+    , synapseMembranesRecord
+    , transmitterPumpRecord
+    , transmitterPumpParamsRecord
+    , targetConcentrationRecord
+    , receptorRecord
+    , sensitivityRecord
+
     , sceneRecord
+
     , integer
     , real
     , json
@@ -55,6 +65,7 @@ module Grace.Type
     , membrane
     , neuron
     , stimulator
+    , synapse
     , scene
     , stimulatorSegment
     ) where
@@ -891,13 +902,13 @@ timeConstant :: loc -> Type loc
 timeConstant location =
   Union { alternatives = Alternatives
   [("Instantaneous", unit location)
-  ,("Sigmoid", sigmoidRecord location)
+  ,("Sigmoid", vSigmoidRecord location)
   ,("LinearExp", linearExpRecord location)
   ] Monotype.EmptyAlternatives
         , .. }
 
-sigmoidRecord :: loc -> Type loc
-sigmoidRecord location = Record {
+vSigmoidRecord :: loc -> Type loc
+vSigmoidRecord location = Record {
   fields = Fields
     [("v_at_max_tau_mv", real location)
     ,("c_base", real location)
@@ -923,17 +934,17 @@ membraneRecord location = Record {
   fields = Fields
     [("capacitance_farads_per_square_cm", real location)
     ,("membrane_channels",
-      List { type_ = Record
-             { fields = Fields
-               [("channel", channel location)
-               ,("siemens_per_square_cm", real location)
-               ] EmptyFields
-             , .. }
-           , ..
-           }
+      List { type_ = membraneChannelRecord location, .. }
      )] EmptyFields
   , ..
 }
+
+membraneChannelRecord :: loc -> Type loc
+membraneChannelRecord location =
+  Record { fields = Fields
+           [("channel", channel location)
+           ,("siemens_per_square_cm", real location)] EmptyFields
+         , .. }
 
 neuronRecord :: loc -> Type loc
 neuronRecord location = Record {
@@ -1009,11 +1020,11 @@ synapseRecord location =
          , ("pre_segment", natural location)
          , ("post_neuron", natural location)
          , ("post_segment", natural location)
-         , ("synapse_membranes", List { type_ = synapseMembraneRecord location, .. } )
+         , ("synapse_membranes", List { type_ = synapseMembranesRecord location, .. } )
          ] Monotype.EmptyFields, ..}
 
-synapseMembraneRecord :: loc -> Type loc
-synapseMembraneRecord location =
+synapseMembranesRecord :: loc -> Type loc
+synapseMembranesRecord location =
   Record { fields = Fields
            [ ("cleft_solution", ionsRecord location)
            , ("transmitter_concentration", Record { fields = Fields
@@ -1021,6 +1032,7 @@ synapseMembraneRecord location =
                                                     ,("gaba_molar", real location)
                                                     ] Monotype.EmptyFields, .. })
            , ("presynaptic_pumps", List { type_ = transmitterPumpRecord location, .. })
+           , ("postsynaptic_receptors", List { type_ = receptorRecord location, .. })
            ] Monotype.EmptyFields, .. }
 
 transmitterPumpRecord :: loc -> Type loc
@@ -1033,9 +1045,41 @@ transmitterPumpRecord location =
 transmitterPumpParamsRecord :: loc -> Type loc
 transmitterPumpParamsRecord location =
   Record { fields = Fields
-           [("target_concentration", )
-           ,("transmitter_params", transmitterParamsRecord location)
+           [("target_concentration", targetConcentrationRecord location)
+           ,("time_constant", timeConstant location)
            ] Monotype.EmptyFields, .. }
+
+targetConcentrationRecord :: loc -> Type loc
+targetConcentrationRecord location = Record {
+  fields = Fields
+    [("v_at_half_max_mv", real location)
+    ,("slope", real location)
+    ,("min_molar", real location)
+    ,("max_molar", real location)
+    ] Monotype.EmptyFields
+  , ..
+  }
+
+receptorRecord :: loc -> Type loc
+receptorRecord location =
+  Record { fields = Fields
+         [("membrane_channel", membraneChannelRecord location )
+         ,("neurotransmitter_sensitivity", sensitivityRecord location )] EmptyFields, ..}
+
+sensitivityRecord :: loc -> Type loc
+sensitivityRecord location =
+  Record { fields = Fields
+           [("transmitter", transmitterEnum location)
+           ,("concentration_at_half_max_molar", real location)
+           ,("slope", real location)
+           ] EmptyFields, .. }
+
+transmitterEnum :: loc -> Type loc
+transmitterEnum location =
+  Union { alternatives = Alternatives
+          [ ("Glutamate", unit location)
+          , ("GABA", unit location)] Monotype.EmptyAlternatives
+        , .. }
 
 sceneRecord :: loc -> Type loc
 sceneRecord location =
@@ -1090,7 +1134,7 @@ stimulator :: loc -> Type loc
 stimulator location = Scalar {  scalar = Monotype.NeuronStimulator, ..  }
 
 synapse :: loc -> Type loc
-synapse location = Scalar { scalar = Monotype.NeuronSynapse }
+synapse location = Scalar { scalar = Monotype.NeuronSynapse, .. }
 
 scene :: loc -> Type loc
 scene location = Scalar {  scalar = Monotype.NeuronScene, ..  }
