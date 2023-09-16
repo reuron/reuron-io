@@ -547,12 +547,12 @@ apply (Value.Builtin NeuronSynapse)
                              [("cleft_solution", cleftSolution)
                              ,("postsynaptic_receptors", Value.List postsynapticReceptors)
                              ,("presynaptic_pumps", Value.List presynapticPumps)
-                             ,("transmitter_concentration", transmitterConcentration)
+                             ,("transmitter_concentrations", transmitterConcentrations)
                              ])) =
       Value.Record
       (HashMap.fromList
                    [("cleft_solution", cleftSolution)
-                   ,("transmitter_concentration", transmitterConcentration)
+                   ,("transmitter_concentrations", transmitterConcentrations)
                    ,("presynaptic_pumps", Value.List $ convertPresynapticPump <$> presynapticPumps)
                    ,("postsynaptic_receptors", Value.List $ convertPostsynapticReceptor <$> postsynapticReceptors)])
     convertSynapseMembranes x = error (show x)
