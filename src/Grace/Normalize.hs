@@ -563,7 +563,7 @@ apply (Value.Builtin NeuronSynapse)
                        ,("transmitter_pump_params", transmitterPumpParams)
                        ])) = Value.Record $ HashMap.fromList
                              [("transmitter", convertTransmitter transmitter)
-                             ,("transmitter_params", convertTransmitterPumpParams transmitterPumpParams)]
+                             ,("transmitter_pump_params", convertTransmitterPumpParams transmitterPumpParams)]
     convertPresynapticPump x = error (show x)
 
     convertTimeConstant (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
