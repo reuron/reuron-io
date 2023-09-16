@@ -1021,6 +1021,7 @@ synapseRecord location =
          , ("post_neuron", natural location)
          , ("post_segment", natural location)
          , ("synapse_membranes", synapseMembranesRecord location )
+         , ("surface_area_square_mm", real location )
          ] Monotype.EmptyFields, ..}
 
 synapseMembranesRecord :: loc -> Type loc

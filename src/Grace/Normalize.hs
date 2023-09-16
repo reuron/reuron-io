@@ -533,6 +533,7 @@ apply (Value.Builtin NeuronSynapse)
    ,("post_segment", postSegment)
    ,("pre_neuron", preNeuron)
    ,("pre_segment", preSegment)
+   ,("surface_area_square_mm", surfaceAreaSquareMM)
    ,("synapse_membranes", synapseMembranes)
    ])) = Value.NeuronSynapse $ Value.Record
   (HashMap.fromList
@@ -540,6 +541,7 @@ apply (Value.Builtin NeuronSynapse)
     ,("pre_segment", preSegment)
     ,("post_neuron", postNeuron)
     ,("post_segment", postSegment)
+    ,("surface_area_square_mm", surfaceAreaSquareMM)
     ,("synapse_membranes", convertSynapseMembranes synapseMembranes)])
   where
 
