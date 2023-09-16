@@ -101,6 +101,7 @@ data Value
     | NeuronNeuron Value
     | NeuronStimulator Value
     | NeuronScene Value
+    | NeuronSynapse Value
     deriving stock (Eq, Show)
 
 instance IsString Value where

@@ -1020,7 +1020,7 @@ synapseRecord location =
          , ("pre_segment", natural location)
          , ("post_neuron", natural location)
          , ("post_segment", natural location)
-         , ("synapse_membranes", List { type_ = synapseMembranesRecord location, .. } )
+         , ("synapse_membranes", synapseMembranesRecord location )
          ] Monotype.EmptyFields, ..}
 
 synapseMembranesRecord :: loc -> Type loc
@@ -1038,8 +1038,8 @@ synapseMembranesRecord location =
 transmitterPumpRecord :: loc -> Type loc
 transmitterPumpRecord location =
   Record { fields = Fields
-           [("transmitter", undefined)
-           ,("transmitter_params", transmitterPumpParamsRecord location)
+           [("transmitter", transmitterEnum location)
+           ,("transmitter_pump_params", transmitterPumpParamsRecord location)
            ] Monotype.EmptyFields, .. }
 
 transmitterPumpParamsRecord :: loc -> Type loc
@@ -1111,6 +1111,9 @@ stimulatorSegment location =
 
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
+
+text :: loc -> Type loc
+text location = Scalar { scalar = Monotype.Text, .. }
 
 json :: loc -> Type loc
 json location = Scalar { scalar = Monotype.JSON, .. }

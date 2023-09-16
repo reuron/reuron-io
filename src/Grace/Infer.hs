@@ -1933,6 +1933,9 @@ infer e0 = do
         Syntax.Builtin{ builtin = Syntax.NeuronScene, location } -> do
           return $ Type.sceneRecord location ~> Type.scene location
 
+        Syntax.Builtin{ builtin = Syntax.NeuronSynapse, location } -> do
+          return $ Type.synapseRecord location ~> Type.synapse location
+
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
                 (   Type.Scalar{ scalar = Monotype.Text, .. }

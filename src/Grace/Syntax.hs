@@ -427,6 +427,10 @@ data Builtin
     -- ^
     --   >>> pretty NeuronScene
     --   Neuron/scene
+    | NeuronSynapse
+    -- ^
+    --   >>> pretty NeuronSynapse
+    --   Neuron/synapse
     | TextEqual
     -- ^
     --   >>> pretty TextEqual
@@ -468,6 +472,7 @@ instance Pretty Builtin where
     pretty NeuronNeuron = Pretty.builtin "Neuron/neuron"
     pretty NeuronStimulator = Pretty.builtin "Neuron/stimulator"
     pretty NeuronScene = Pretty.builtin "Neuron/scene"
+    pretty NeuronSynapse = Pretty.builtin "Neuron/synapse"
 
     pretty TextEqual      = Pretty.builtin "Text/equal"
 

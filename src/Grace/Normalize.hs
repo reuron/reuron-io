@@ -512,12 +512,12 @@ apply (Value.Builtin NeuronScene)
     convertNeurons x = error (show x)
 
     convertNeuronAndStimulator
-      (Value.Record (HashMap.toList ->
-                  [("neuron", neuron) -- TODO: It is strange that these fields need to be not-alphabetical.
-                  ,("location", location)
+      (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                  [ ("location", location)
+                  , ("neuron", neuron)
                   ,("stimulator_segments", stimulatorSegment)])) =
       Value.Record (HashMap.fromList
-                    [("location", location)
+                    [ ("location", location)
                     , ("neuron", neuron)
                     , ("stimulator_segments" , stimulatorSegment)
                     ])
@@ -525,6 +525,94 @@ apply (Value.Builtin NeuronScene)
     convertNeuronAndStimulator x = error (show x)
 apply (Value.Builtin NeuronScene) (Value.Record x) = error $ show $ HashMap.keys x
 apply (Value.Builtin NeuronScene) x = error (show x)
+
+apply (Value.Builtin NeuronSynapse)
+  (Value.Record
+  (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+   [("post_neuron", postNeuron)
+   ,("post_segment", postSegment)
+   ,("pre_neuron", preNeuron)
+   ,("pre_segment", preSegment)
+   ,("synapse_membranes", synapseMembranes)
+   ])) = Value.NeuronSynapse $ Value.Record
+  (HashMap.fromList
+    [("pre_neuron", preNeuron)
+    ,("pre_segment", preSegment)
+    ,("post_neuron", postNeuron)
+    ,("post_segment", postSegment)
+    ,("synapse_membranes", convertSynapseMembranes synapseMembranes)])
+  where
+
+    convertSynapseMembranes (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                             [("cleft_solution", cleftSolution)
+                             ,("postsynaptic_receptors", Value.List postsynapticReceptors)
+                             ,("presynaptic_pumps", Value.List presynapticPumps)
+                             ,("transmitter_concentration", transmitterConcentration)
+                             ])) =
+      Value.Record
+      (HashMap.fromList
+                   [("cleft_solution", cleftSolution)
+                   ,("transmitter_concentration", transmitterConcentration)
+                   ,("presynaptic_pumps", Value.List $ convertPresynapticPump <$> presynapticPumps)
+                   ,("postsynaptic_receptors", Value.List $ convertPostsynapticReceptor <$> postsynapticReceptors)])
+    convertSynapseMembranes x = error (show x)
+
+    convertPresynapticPump
+        (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                       [("transmitter", transmitter)
+                       ,("transmitter_pump_params", transmitterPumpParams)
+                       ])) = Value.Record $ HashMap.fromList
+                             [("transmitter", convertTransmitter transmitter)
+                             ,("transmitter_params", convertTransmitterPumpParams transmitterPumpParams)]
+    convertPresynapticPump x = error (show x)
+
+    convertTimeConstant (Value.Application (Value.Alternative altName) (Value.Record fields)) | isAlt altName =
+      Value.Record ( HashMap.insert "type" (Value.Scalar (Text altName)) fields )
+    convertTimeConstant x = error $ "Encountered invalid timeConstant: " ++ show x
+    isAlt :: Text.Text -> Bool
+    isAlt alt = alt == "Sigmoid" || alt ==  "LinearExp" || alt == "Instantaneous"
+
+    convertTransmitterPumpParams
+        (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                       [("target_concentration", targetConcentration)
+                       ,("time_constant", timeConstant)
+                       ])) = Value.Record $ HashMap.fromList
+                             [("target_concentration", targetConcentration)
+                             ,("time_constant", convertTimeConstant timeConstant)]
+    convertTransmitterPumpParams x = error (show x)
+
+    convertPostsynapticReceptor
+        (Value.Record ( List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                        [("membrane_channel", membraneChannel)
+                        ,("neurotransmitter_sensitivity", neurotransmitterSensitivity)])) =
+        Value.Record $ HashMap.fromList
+          [("membrane_channel", convertMembraneChannel membraneChannel)
+          ,("neurotransmitter_sensitivity", convertNeurotransmitterSensitivity neurotransmitterSensitivity)]
+
+    -- TODO: Factor this out?
+    convertMembraneChannel :: Value -> Value
+    convertMembraneChannel
+        (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+                        [("channel", channel)
+                        ,("siemens_per_square_cm", conductance)
+                        ])) = Value.Record
+                                [("channel", channel)
+                                ,("siemens_per_square_cm", conductance)]
+    convertMembraneChannel x = error $ "Encountered unexpected membraneChanne: " ++ show x
+    convertNeurotransmitterSensitivity
+        (Value.Record (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+         [("concentration_at_half_max_molar", concentrationAtHalfMaxMolar)
+         ,("slope", slope)
+         ,("transmitter", transmitter)
+         ])) = Value.Record $ HashMap.fromList
+                                [("transmitter", convertTransmitter transmitter)
+                                ,("concentration_at_half_max_molar", concentrationAtHalfMaxMolar)
+                                ,("slope", slope)]
+    convertNeurotransmitterSensitivity x = error (show x)
+    convertTransmitter (Value.Application (Value.Alternative altName) _ ) =
+      Value.Scalar (Text altName)
+    convertTransmitter x = error (show x)
+apply (Value.Builtin NeuronSynapse) x = error (show x)
 
 
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
@@ -607,7 +695,8 @@ apply
     loop v =
         v
 apply function argument =
-    Value.Application function argument
+  -- error $ "not covered: " ++ show function ++ " " ++ show argument
+  Value.Application function argument
 
 countNames :: Text -> [Text] -> Int
 countNames name = length . filter (== name)
@@ -706,6 +795,8 @@ quote names value =
         Value.NeuronStimulator inner ->
             quote names inner
         Value.NeuronScene inner ->
+            quote names inner
+        Value.NeuronSynapse inner ->
             quote names inner
   where
     location = ()
