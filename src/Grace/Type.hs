@@ -1021,19 +1021,19 @@ synapseRecord location =
          , ("post_neuron", natural location)
          , ("post_segment", natural location)
          , ("synapse_membranes", synapseMembranesRecord location )
-         , ("surface_area_square_mm", real location )
          ] Monotype.EmptyFields, ..}
 
 synapseMembranesRecord :: loc -> Type loc
 synapseMembranesRecord location =
   Record { fields = Fields
            [ ("cleft_solution", ionsRecord location)
-           , ("transmitter_concentration", Record { fields = Fields
+           , ("transmitter_concentrations", Record { fields = Fields
                                                     [("glutamate_molar", real location)
                                                     ,("gaba_molar", real location)
                                                     ] Monotype.EmptyFields, .. })
            , ("presynaptic_pumps", List { type_ = transmitterPumpRecord location, .. })
            , ("postsynaptic_receptors", List { type_ = receptorRecord location, .. })
+           , ("surface_area_square_mm", real location )
            ] Monotype.EmptyFields, .. }
 
 transmitterPumpRecord :: loc -> Type loc

@@ -533,7 +533,6 @@ apply (Value.Builtin NeuronSynapse)
    ,("post_segment", postSegment)
    ,("pre_neuron", preNeuron)
    ,("pre_segment", preSegment)
-   ,("surface_area_square_mm", surfaceAreaSquareMM)
    ,("synapse_membranes", synapseMembranes)
    ])) = Value.NeuronSynapse $ Value.Record
   (HashMap.fromList
@@ -541,7 +540,6 @@ apply (Value.Builtin NeuronSynapse)
     ,("pre_segment", preSegment)
     ,("post_neuron", postNeuron)
     ,("post_segment", postSegment)
-    ,("surface_area_square_mm", surfaceAreaSquareMM)
     ,("synapse_membranes", convertSynapseMembranes synapseMembranes)])
   where
 
@@ -549,6 +547,7 @@ apply (Value.Builtin NeuronSynapse)
                              [("cleft_solution", cleftSolution)
                              ,("postsynaptic_receptors", Value.List postsynapticReceptors)
                              ,("presynaptic_pumps", Value.List presynapticPumps)
+                             ,("surface_area_square_mm", surfaceAreaSquareMM)
                              ,("transmitter_concentrations", transmitterConcentrations)
                              ])) =
       Value.Record
@@ -556,7 +555,9 @@ apply (Value.Builtin NeuronSynapse)
                    [("cleft_solution", cleftSolution)
                    ,("transmitter_concentrations", transmitterConcentrations)
                    ,("presynaptic_pumps", Value.List $ convertPresynapticPump <$> presynapticPumps)
-                   ,("postsynaptic_receptors", Value.List $ convertPostsynapticReceptor <$> postsynapticReceptors)])
+                   ,("postsynaptic_receptors", Value.List $ convertPostsynapticReceptor <$> postsynapticReceptors)
+                   ,("surface_area_square_mm", surfaceAreaSquareMM)
+                   ])
     convertSynapseMembranes x = error (show x)
 
     convertPresynapticPump
