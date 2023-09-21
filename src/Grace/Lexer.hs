@@ -218,6 +218,7 @@ number =
   where
     parseInteger = Int
       <$> lexeme Lexer.decimal
+      <* Megaparsec.notFollowedBy (Megaparsec.Char.char 'e')
       <* Megaparsec.notFollowedBy (Megaparsec.Char.char '.')
     parseScientific = do
         scientific <- lexeme Lexer.scientific
