@@ -37,7 +37,7 @@ import Control.Monad.Combinators (many, manyTill, sepBy1)
 import Data.HashSet (HashSet)
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Maybe (fromJust)
-import Data.Scientific (Scientific)
+import Data.Scientific (Scientific, toBoundedInteger)
 import Data.Text (Text)
 import Data.Void (Void)
 import Grace.Location (Location(..), Offset(..))
@@ -57,6 +57,7 @@ import qualified Text.Megaparsec.Char as Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import qualified Text.Megaparsec.Error as Error
 import qualified Text.URI as URI
+
 
 -- | Short-hand type synonym used by lexing utilities
 type Parser = Megaparsec.Parsec Void Text
@@ -213,16 +214,20 @@ lex name code =
             return tokens
 
 number :: Parser Token
-number =
-  try parseInteger <|> parseScientific
-  where
-    parseInteger = Int
-      <$> lexeme Lexer.decimal
-      <* Megaparsec.notFollowedBy (Megaparsec.Char.char 'e')
-      <* Megaparsec.notFollowedBy (Megaparsec.Char.char '.')
-    parseScientific = do
-        scientific <- lexeme Lexer.scientific
-        return (RealLiteral scientific)
+number = do
+    numberChars <- Megaparsec.lookAhead
+      (Megaparsec.many (Megaparsec.satisfy $
+                         \t -> Char.isDigit t || t == '.' || t == 'e' ))
+    scientific <- lexeme Lexer.scientific
+
+    case toBoundedInteger scientific of
+        Just i ->
+            if ('.' `elem` numberChars) || ('e' `elem` numberChars)
+            then return (RealLiteral (fromIntegral i))
+            else return (Int i)
+        Nothing ->
+            return (RealLiteral scientific)
+
 
 file :: Parser Token
 file = lexeme do
