@@ -153,7 +153,6 @@
             name = "image-root";
             paths = with withDefaultCompiler.pkgs;
               [ "${withDefaultCompiler.graceMinimal}"
-                bash
                 coreutils
                 cacert
                 "${withghcjs.reuron-io-static}"
