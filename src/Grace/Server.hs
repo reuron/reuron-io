@@ -28,6 +28,7 @@ import qualified Network.Wai.Application.Static as Wai
 import qualified Data.ByteString.Builder as Builder
 import qualified Grace.Interpret as Interpret
 import Grace.Input (Input(Code))
+import qualified Grace.Import as GraceImport
 import qualified Grace.Normalize as Normalize
 import qualified Grace.Pretty as Pretty
 
@@ -47,6 +48,13 @@ serve port = Warp.run port $ Cors.simpleCors $ \req respond ->
           let syntax = Normalize.quote [] value
           let response = Pretty.toText syntax
           respond $ Wai.responseLBS HTTP.status200 [] (LBS.fromStrict $ Text.encodeUtf8 response)
+    ["delete-cache-line"] -> do
+      inputPath <- Text.decodeUtf8 . LBS.toStrict <$> Wai.strictRequestBody req
+      GraceImport.deleteCacheLine inputPath
+      respond $ Wai.responseLBS HTTP.status200 [] "Ok"
+    ["reset-cache"] -> do
+      GraceImport.resetCache
+      respond $ Wai.responseLBS HTTP.status200 [] "Ok"
     ["convert-swc"] -> do
       swcBytes <- Wai.lazyRequestBody req
       let simplifyDegree = case List.lookup "degree" (Wai.queryString req) of

@@ -6,6 +6,9 @@
 module Grace.Import
     ( -- * Import resolution
       resolve
+      -- * Entry deletion
+    , deleteCacheLine
+    , resetCache
       -- * Exceptions
     , ResolutionError(..)
     , ImportError(..)
@@ -56,6 +59,17 @@ fetch manager url = do
             return body
         Just body -> do
             return body
+
+deleteCacheLine :: Text -> IO ()
+deleteCacheLine entry = do
+  res <- IORef.atomicModifyIORef' cache (\m -> (HashMap.delete entry m, ()))
+  return res
+
+resetCache :: IO ()
+resetCache = do
+  IORef.atomicWriteIORef cache mempty
+  return ()
+
 
 -- | Resolve an `Input` by returning the source code that it represents
 resolve :: Manager -> Input -> IO (Syntax Location Input)
