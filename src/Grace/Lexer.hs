@@ -158,6 +158,8 @@ parseToken =
             , Neuron   <$ symbol "Neuron"
             , Membrane <$ symbol "Membrane"
             , Scene    <$ symbol "Scene"
+            , Stimulator <$ symbol "Stimulator"
+            , Synapse <$ symbol "Synapse"
             ] <?> "built-in type"
 
         , OpenAngle        <$ symbol "<"
@@ -539,6 +541,8 @@ data Token
     | Or
     | Plus
     | Scene
+    | Stimulator
+    | Synapse
     | Text
     | TextEqual
     | TextLiteral Text

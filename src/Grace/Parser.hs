@@ -226,6 +226,8 @@ render t = case t of
     Lexer.Or               -> "||"
     Lexer.Plus             -> "+"
     Lexer.Scene            -> "Scene"
+    Lexer.Stimulator       -> "Stimulator"
+    Lexer.Synapse          -> "Synapse"
     Lexer.Text             -> "Text"
     Lexer.TextEqual        -> "Text/equal"
     Lexer.TextLiteral _    -> "a text literal"
@@ -655,8 +657,10 @@ grammar = mdo
                 return Type.Scalar{ scalar = Monotype.NeuronMembrane, .. }
         <|> do  location <- locatedToken Lexer.Scene
                 return Type.Scalar{ scalar = Monotype.NeuronScene, .. }
-        <|> do  location <- locatedToken Lexer.NeuronSynapse
+        <|> do  location <- locatedToken Lexer.Synapse
                 return Type.Scalar{ scalar = Monotype.NeuronSynapse, .. }
+        <|> do  location <- locatedToken Lexer.Stimulator
+                return Type.Scalar{ scalar = Monotype.NeuronStimulator, .. }
         <|> do  location <- locatedToken Lexer.Real
                 return Type.Scalar{ scalar = Monotype.Real, .. }
         <|> do  location <- locatedToken Lexer.Integer

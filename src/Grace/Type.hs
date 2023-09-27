@@ -1113,9 +1113,6 @@ stimulatorSegment location =
 real :: loc -> Type loc
 real location = Scalar { scalar = Monotype.Real, .. }
 
-text :: loc -> Type loc
-text location = Scalar { scalar = Monotype.Text, .. }
-
 json :: loc -> Type loc
 json location = Scalar { scalar = Monotype.JSON, .. }
 

@@ -588,9 +588,10 @@ apply (Value.Builtin NeuronSynapse)
         (Value.Record ( List.sortBy (Ord.comparing fst) . HashMap.toList ->
                         [("membrane_channel", membraneChannel)
                         ,("neurotransmitter_sensitivity", neurotransmitterSensitivity)])) =
-        Value.Record $ HashMap.fromList
-          [("membrane_channel", convertMembraneChannel membraneChannel)
-          ,("neurotransmitter_sensitivity", convertNeurotransmitterSensitivity neurotransmitterSensitivity)]
+          Value.Record $ HashMap.fromList
+            [("membrane_channel", convertMembraneChannel membraneChannel)
+            ,("neurotransmitter_sensitivity", convertNeurotransmitterSensitivity neurotransmitterSensitivity)]
+    convertPostsynapticReceptor x = error (show x) -- TODO "Error"
 
     -- TODO: Factor this out?
     convertMembraneChannel :: Value -> Value
@@ -649,9 +650,9 @@ apply (Value.Builtin RealShow) (Value.Scalar (Integer n)) =
 apply (Value.Builtin RealShow) (Value.Scalar (Real n)) =
     Value.Scalar (Text (Text.pack (show n)))
 apply (Value.Builtin RealSin) (Value.Scalar (Real n)) =
-    Value.Scalar (Real (fromFloatDigits @Double (sin (toRealFloat n))))
+    Value.Scalar (Real (fromFloatDigits @Double (roundTo12Places $ sin (toRealFloat n))))
 apply (Value.Builtin RealCos) (Value.Scalar (Real n)) =
-    Value.Scalar (Real (fromFloatDigits @Double (cos (toRealFloat n))))
+    Value.Scalar (Real (fromFloatDigits @Double (roundTo12Places $ cos (toRealFloat n))))
 apply
     (Value.Application (Value.Builtin TextEqual) (Value.Scalar (Text l)))
     (Value.Scalar (Text r)) =
@@ -803,3 +804,6 @@ quote names value =
             quote names inner
   where
     location = ()
+
+roundTo12Places :: Double -> Double
+roundTo12Places x = realToFrac (round (x * 1e20) :: Integer) * 1e-20
