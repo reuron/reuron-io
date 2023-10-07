@@ -45,9 +45,12 @@ import qualified Grace.Domain as Domain
 import qualified Grace.Lexer as Lexer
 import qualified Grace.Monotype as Monotype
 import qualified Grace.Syntax as Syntax
+import qualified Grace.Synonym as Synonym
 import qualified Grace.Type as Type
 import qualified Text.Earley as Earley
 import qualified Text.URI as URI
+
+import Debug.Trace (trace)
 
 type Parser r = Prod r Text LocatedToken
 
@@ -228,9 +231,14 @@ render t = case t of
     Lexer.Scene            -> "Scene"
     Lexer.Stimulator       -> "Stimulator"
     Lexer.Synapse          -> "Synapse"
+    Lexer.Test             -> "Test"
     Lexer.Text             -> "Text"
     Lexer.TextEqual        -> "Text/equal"
     Lexer.TextLiteral _    -> "a text literal"
+    Lexer.TimeConstant     -> "TimeConstant"
+    Lexer.TimeConstantInstantaneous -> "Instantaneous"
+    Lexer.TimeConstantLinearExp -> "LinearExp"
+    Lexer.TimeConstantSigmoid -> "Sigmoid"
     Lexer.Then             -> "then"
     Lexer.Type             -> "Type"
     Lexer.Times            -> "*"
@@ -538,6 +546,18 @@ grammar = mdo
 
                 return Syntax.Builtin{ builtin = Syntax.TextEqual, .. }
 
+        <|> do  location <- locatedToken Lexer.TimeConstantInstantaneous
+
+                return Syntax.Builtin{ builtin = Syntax.TimeConstantInstantaneous, .. }
+
+        <|> do  location <- locatedToken Lexer.TimeConstantLinearExp
+
+                return Syntax.Builtin{ builtin = Syntax.TimeConstantLinearExp, .. }
+
+        <|> do  location <- locatedToken Lexer.TimeConstantSigmoid
+
+                return Syntax.Builtin{ builtin = Syntax.TimeConstantSigmoid, .. }
+
         <|> do  ~(location, t) <- locatedText
 
                 return Syntax.Scalar{ scalar = Syntax.Text t, .. }
@@ -671,6 +691,10 @@ grammar = mdo
                 return Type.Scalar{ scalar = Monotype.Natural, .. }
         <|> do  location <- locatedToken Lexer.Text
                 return Type.Scalar{ scalar = Monotype.Text, .. }
+        <|> do  location <- locatedToken Lexer.TimeConstant
+                return Type.Scalar{ scalar = Monotype.TimeConstant, .. }
+        <|> do  location <- locatedToken Lexer.Test
+                return Type.Semantic { semanticLabel = Type.LabelTest, .. }
         <|> do  ~(location, name) <- locatedLabel
                 return Type.VariableType{..}
         <|> do  let record location fields = Type.Record{..}
@@ -754,4 +778,4 @@ parse name code = do
             Left (ParsingFailed (Location{..}))
 
         (result : _, _) -> do
-            return result
+          return $ Synonym.desugarTerm result

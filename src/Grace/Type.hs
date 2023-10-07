@@ -20,6 +20,7 @@ module Grace.Type
       Type(..)
     , Record(..)
     , Union(..)
+    , SemanticLabel(..)
       -- * Utilities
     , solveType
     , solveFields
@@ -44,8 +45,10 @@ module Grace.Type
     , vSigmoidRecord
     , linearExpRecord
     , membraneRecord
+    , membraneChannelRecord
     , neuronRecord
     , stimulatorRecord
+    , testRecord
 
     , synapseRecord
     , synapseMembranesRecord
@@ -152,6 +155,10 @@ data Type s
     -- >>> pretty @(Type ()) (Union () (Alternatives [("X", "X"), ("Y", "Y")] (Monotype.UnsolvedAlternatives 0)))
     -- < X: X | Y: Y | a? >
     | Scalar { location :: s, scalar :: Scalar }
+    | Semantic { location :: s, semanticLabel :: SemanticLabel }
+    -- ^ A type that is semantically meaningful to the user, but
+    -- otherwise can't be used in typechecking. It should be desugared
+    -- into some other type before use in typchecking.
     deriving stock (Eq, Functor, Generic, Lift, Show)
 
 instance IsString (Type ()) where
@@ -197,6 +204,18 @@ instance Plated (Type s) where
                 return Union{ alternatives = Alternatives newAlternativeTypes remainingAlternatives, .. }
             Scalar{..} -> do
                 pure Scalar{..}
+            Semantic{..} -> do
+                pure Semantic{..}
+
+data SemanticLabel
+  = LabelChannel
+  | LabelMembrane
+  | LabelMembraneChannel
+  | LabelNeuron
+  | LabelSynapse
+  | LabelScene
+  | LabelTest -- TODO: Remove me when semantic stuff is solid.
+  deriving (Eq, Generic, Lift, Show)
 
 -- | A potentially polymorphic record type
 data Record s = Fields [(Text, Type s)] RemainingFields
@@ -347,6 +366,9 @@ substituteType a n _A type_ =
         Scalar{..} ->
             Scalar{..}
 
+        Semantic{..} ->
+            Semantic{..}
+
 {-| Replace all occurrences of a variable within one `Type` with another `Type`,
     given the variable's label and index
 -}
@@ -402,6 +424,9 @@ substituteFields ρ0 n r@(Fields kτs ρ1) type_ =
         Scalar{..} ->
             Scalar{..}
 
+        Semantic{..} ->
+            Semantic{..}
+
 {-| Replace all occurrences of a variable within one `Type` with another `Type`,
     given the variable's label and index
 -}
@@ -456,6 +481,9 @@ substituteAlternatives ρ0 n r@(Alternatives kτs ρ1) type_ =
 
         Scalar{..} ->
             Scalar{..}
+
+        Semantic{..} ->
+            Semantic{..}
 
 {-| Count how many times the given `Existential` `Type` variable appears within
     a `Type`
@@ -648,6 +676,14 @@ prettyPrimitiveType Union{..} =
     prettyUnionType alternatives
 prettyPrimitiveType Scalar{..} =
     pretty scalar
+prettyPrimitiveType Semantic{..} = case semanticLabel of
+  LabelTest -> "Test"
+  LabelNeuron -> "Neuron"
+  LabelSynapse -> "Synapse"
+  LabelChannel -> "Channel"
+  LabelMembrane -> "Membrane"
+  LabelMembraneChannel -> "MembraneChannel"
+  LabelScene -> "MembraneScene"
 prettyPrimitiveType other =
     Pretty.group (Pretty.flatAlt long short)
   where
@@ -1081,6 +1117,11 @@ transmitterEnum location =
           [ ("Glutamate", unit location)
           , ("GABA", unit location)] Monotype.EmptyAlternatives
         , .. }
+
+testRecord :: loc -> Type loc
+testRecord location =
+  Record { fields = Fields
+         [("foo", real location), ("bar", real location)] Monotype.EmptyFields, ..}
 
 sceneRecord :: loc -> Type loc
 sceneRecord location =

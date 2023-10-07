@@ -140,6 +140,9 @@ parseToken =
             , NeuronScene <$ symbol "Neuron/scene"
             , NeuronSynapse <$ symbol "Neuron/synapse"
             , TextEqual      <$ symbol "Text/equal"
+            , TimeConstantLinearExp <$ symbol "LinearExp"
+            , TimeConstantInstantaneous <$ symbol "Instantaneous"
+            , TimeConstantSigmoid <$ symbol "Sigmoid"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
             , Null           <$ symbol "null"
@@ -160,6 +163,8 @@ parseToken =
             , Scene    <$ symbol "Scene"
             , Stimulator <$ symbol "Stimulator"
             , Synapse <$ symbol "Synapse"
+            , TimeConstant <$ symbol "TimeConstant"
+            , Test     <$ symbol "Test"
             ] <?> "built-in type"
 
         , OpenAngle        <$ symbol "<"
@@ -378,8 +383,13 @@ reserved =
         , "Neuron/channel"
         , "Optional"
         , "Scene"
+        , "Test"
         , "Text"
         , "Text/equal"
+        , "TimeConstant"
+        , "TimeConstantInstantaneous"
+        , "TimeConstantLinearExp"
+        , "TimeConstantSigmoid"
         , "Type"
         , "else"
         , "exists"
@@ -543,9 +553,14 @@ data Token
     | Scene
     | Stimulator
     | Synapse
+    | Test -- TODO: Drop me when SemanticLabel type is finished.
     | Text
     | TextEqual
     | TextLiteral Text
+    | TimeConstant
+    | TimeConstantInstantaneous
+    | TimeConstantLinearExp
+    | TimeConstantSigmoid
     | Then
     | Times
     | True_

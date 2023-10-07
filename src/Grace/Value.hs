@@ -3,18 +3,24 @@
 {-| This module contains the `Value` type used internally for efficient
     evaluation of expressions
 -}
+
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveLift    #-}
+
 module Grace.Value
     ( -- * Value
       Closure(..)
     , Value(..)
     ) where
 
+import Control.Lens (Plated(..))
 import Data.Aeson (FromJSON(..))
 import Data.Foldable (toList)
 import Data.HashMap.Strict.InsOrd (InsOrdHashMap)
 import Data.Sequence (Seq)
 import Data.String (IsString(..))
 import Data.Text (Text)
+import GHC.Generics (Generic)
 import Grace.Location (Location)
 import Grace.Syntax (Builtin, Operator, Scalar, Syntax)
 import Grace.Type (Type)
@@ -102,7 +108,37 @@ data Value
     | NeuronStimulator Value
     | NeuronScene Value
     | NeuronSynapse Value
-    deriving stock (Eq, Show)
+    | TimeConstant Value
+    deriving stock (Eq, Show, Generic)
+
+-- This is not a very good Plated instance - it doesn't look under complicated types,
+-- it doesn't go under lambdas. But it should traverse lists and sum and product types
+-- well enough to do what we do with it: replace Neuronal structs with their
+-- json-friendly counterparts.
+instance Plated Value where
+  plate f v = case v of
+    Variable n i -> pure $ Variable n i
+    Lambda c -> pure $ Lambda c
+    Application fun a -> Application <$> f fun <*> f a
+    List vals -> List <$> traverse f vals
+    Record fields -> Record <$> traverse f fields
+    Field val name -> Field <$> f val <*> pure name
+    Alternative name -> pure $ Alternative name
+    Merge val -> Merge <$> f val
+    If b l r -> If <$> f b <*> f l <*> f r
+    Builtin b -> pure $ Builtin b
+    Scalar s -> pure $ Scalar s
+    Operator a op b -> Operator <$> f a <*> pure op <*> f b
+    NeuronChannel val -> pure $ NeuronChannel val
+    NeuronMembrane val -> pure $ NeuronMembrane val
+    NeuronNeuron val -> pure $ NeuronNeuron val
+    NeuronStimulator val -> pure $ NeuronStimulator val
+    NeuronScene val -> pure $ NeuronScene val
+    NeuronSynapse val -> pure $ NeuronSynapse val
+    TimeConstant val -> pure $ TimeConstant val
+
+
+
 
 instance IsString Value where
     fromString string = Variable (fromString string) 0

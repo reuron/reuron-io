@@ -85,6 +85,7 @@ data Scalar
     | NeuronSynapse
     | NeuronStimulator
     | NeuronScene
+    | TimeConstant
     deriving stock (Eq, Generic, Lift, Show)
 
 instance Pretty Scalar where
@@ -100,6 +101,7 @@ instance Pretty Scalar where
     pretty NeuronStimulator = builtin "Stimulator"
     pretty NeuronScene = builtin "Scene"
     pretty NeuronSynapse = builtin "Synapse"
+    pretty TimeConstant = builtin "TimeConstant"
 
 -- | A monomorphic record type
 data Record = Fields [(Text, Monotype)] RemainingFields

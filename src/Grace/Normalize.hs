@@ -280,6 +280,8 @@ evaluate env syntax =
             right' = evaluate env right
 
         Syntax.Builtin{ builtin = RealPi } -> Value.Scalar (Real 3.14159)
+        Syntax.Builtin{ builtin = TimeConstantInstantaneous } ->
+          Value.TimeConstant $ Value.Record [("type", Value.Scalar (Syntax.Text "Instantaneous"))]
         Syntax.Builtin{..} ->
             Value.Builtin builtin
 
@@ -390,17 +392,24 @@ apply
     (Value.Builtin NaturalToInteger)
     (Value.Scalar (Natural n)) = Value.Scalar (Integer (fromIntegral n))
 apply
-    (Value.Builtin NeuronIonLevels) ionsRecord
-     = ionsRecord
-apply
     (Value.Builtin NeuronGating) gatingRecord
      = gatingRecord
--- apply (Value.Alternative "Sigmoid") fields =
---   fields
--- apply (Value.Alternative "LinearExp") fields =
---   fields
--- apply (Value.Alternative "Instantaneous") fields =
---   fields
+-- apply
+--     (Value.Alternative altName) (Value.Record fields)
+--   | List.elem @[] altName ["Sigmoind","LinearExp","Instantaneous"] =
+--       Value.Record ( HashMap.insert "type" (Value.Scalar (Text altName)) fields )
+apply
+    (Value.Builtin TimeConstantLinearExp)
+    (Value.Record
+      (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+       [("coef", coef), ("inner_coef", innerCoef), ("v_offset_mv", vOffsetMv)])) =
+    Value.TimeConstant $ Value.Record [("coef", coef), ("inner_coef", innerCoef), ("v_offset_mv", vOffsetMv)]
+apply
+    (Value.Builtin TimeConstantSigmoid)
+    (Value.Record
+      (List.sortBy (Ord.comparing fst) . HashMap.toList ->
+       [("c_amp", cAmp), ("c_base", cBase), ("sigma", sigma), ("v_at_max_tau_mv", vAtMaxTauMv)])) =
+    Value.TimeConstant $ Value.Record [("c_amp", cAmp), ("c_base", cBase), ("sigma", sigma), ("v_at_max_tau_mv", vAtMaxTauMv)]
 apply
     (Value.Builtin NeuronChannel)
     (Value.Record
@@ -801,6 +810,8 @@ quote names value =
         Value.NeuronScene inner ->
             quote names inner
         Value.NeuronSynapse inner ->
+            quote names inner
+        Value.TimeConstant inner ->
             quote names inner
   where
     location = ()

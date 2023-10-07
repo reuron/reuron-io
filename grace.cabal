@@ -45,6 +45,8 @@ library
                      , Grace.Parser
                      , Grace.Pretty
                      , Grace.Server
+                     , Grace.Simulator
+                     , Grace.Synonym
                      , Grace.Syntax
                      , Grace.HTTP
                      , Grace.TH

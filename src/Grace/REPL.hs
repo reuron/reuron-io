@@ -29,6 +29,7 @@ import qualified Data.Text.IO as Text.IO
 import qualified Grace.HTTP as HTTP
 import qualified Grace.Interpret as Interpret
 import qualified Grace.Normalize as Normalize
+import qualified Grace.Simulator as Simulator
 import qualified Grace.Pretty as Pretty
 import qualified Grace.Type as Type
 import qualified Grace.Width as Width
@@ -45,6 +46,10 @@ repl = do
             context <- get
 
             Except.runExceptT (Interpret.interpretWith context Nothing manager input)
+
+    let simulator input = do
+          context <- get
+          Except.runExceptT (Interpret.interpretWith context Nothing manager input)
 
     let err e =
             liftIO (Text.IO.hPutStrLn IO.stderr (Text.pack (displayException e)))

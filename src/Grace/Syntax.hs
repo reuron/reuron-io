@@ -435,6 +435,9 @@ data Builtin
     -- ^
     --   >>> pretty TextEqual
     --   Text/equal
+    | TimeConstantInstantaneous
+    | TimeConstantLinearExp
+    | TimeConstantSigmoid
     deriving (Bounded, Enum, Eq, Generic, Lift, Show)
 
 instance Pretty Builtin where
@@ -475,6 +478,9 @@ instance Pretty Builtin where
     pretty NeuronSynapse = Pretty.builtin "Neuron/synapse"
 
     pretty TextEqual      = Pretty.builtin "Text/equal"
+    pretty TimeConstantInstantaneous = Pretty.builtin "Instantaneous"
+    pretty TimeConstantLinearExp = Pretty.builtin "LinearExp"
+    pretty TimeConstantSigmoid = Pretty.builtin "Sigmoid"
 
 -- | Pretty-print an expression
 prettyExpression :: Pretty a => Syntax s a -> Doc AnsiStyle

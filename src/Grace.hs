@@ -22,6 +22,7 @@ import Grace.Interpret (Input(..))
 import Grace.Location (Location(..))
 import Grace.Syntax (Builtin(..), Syntax(..))
 import Grace.Type (Type(..))
+import qualified Grace.Simulator as Simulator
 import Options.Applicative (Parser, ParserInfo)
 import Prettyprinter (Doc)
 import Prettyprinter.Render.Terminal (AnsiStyle)
@@ -34,6 +35,7 @@ import qualified Grace.Infer as Infer
 import qualified Grace.Interpret as Interpret
 import qualified Grace.Monotype as Monotype
 import qualified Grace.Normalize as Normalize
+import Grace.Synonym (resugarType)
 import qualified Grace.Parser as Parser
 import qualified Grace.Pretty
 import qualified Grace.REPL as REPL
@@ -63,6 +65,7 @@ data Options
       , highlight :: Highlight
       , file :: FilePath
       }
+    | ToSimulator { file :: FilePath }
     | Text { file :: FilePath }
     | Format { highlight :: Highlight, files :: [FilePath] }
     | Builtins { highlight :: Highlight }
@@ -90,6 +93,13 @@ parser = do
             highlight <- parseHighlight
 
             return Interpret{..}
+
+    let toSimulator = do
+            file <- Options.strArgument
+                (   Options.help "File to interpret"
+                <>  Options.metavar "FILE"
+                )
+            return ToSimulator{..}
 
     let text = do
             file <- Options.strArgument
@@ -128,6 +138,12 @@ parser = do
         (   Options.command "interpret"
                 (Options.info interpret
                     (Options.progDesc "Interpret a Grace file")
+                )
+
+
+        <>  Options.command "to-simulator"
+                (Options.info toSimulator
+                    (Options.progDesc "Render a Grace value to a simulator json value")
                 )
 
         <>  Options.command "text"
@@ -220,11 +236,30 @@ main = do
               then
                 BS.putStrLn $ Aeson.encode $ Aeson.object
                     [ "value" Aeson..= show (Grace.Pretty.pretty syntax)
-                    , "type" Aeson..= show (Grace.Pretty.pretty inferred)
+                    , "type" Aeson..= show (Grace.Pretty.pretty (resugarType inferred))
                     ]
               else
 
                 render (Grace.Pretty.pretty annotatedExpression <> Pretty.hardline)
+
+        ToSimulator{..} -> do
+            input <- case file of
+                "-" -> do
+                    Code "(input)" <$> Text.IO.getContents
+                _ -> do
+                    return (Path file)
+
+            eitherResult <- do
+                Except.runExceptT (Interpret.interpret input)
+
+            (inferred, value) <- throws eitherResult
+
+            let syntax = Normalize.quote [] $ Simulator.toSimulator value
+
+            BS.putStrLn $ Aeson.encode $ Aeson.object
+                [ "value" Aeson..= show (Grace.Pretty.pretty (syntax))
+                , "type" Aeson..= show (Grace.Pretty.pretty (resugarType inferred))
+                ]
 
         Text{..} -> do
             input <- case file of

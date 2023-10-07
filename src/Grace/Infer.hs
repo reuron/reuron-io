@@ -42,6 +42,7 @@ import Grace.Existential (Existential)
 import Grace.Location (Location(..))
 import Grace.Monotype (Monotype)
 import Grace.Pretty (Pretty(..))
+import Grace.Synonym (resugarType)
 import Grace.Syntax (Syntax)
 import Grace.Type (Type(..))
 import Grace.Value (Value)
@@ -227,6 +228,9 @@ wellFormedType _Γ type0 =
 
         Type.Scalar{} -> do
             return ()
+
+        Type.Semantic{} -> do
+          error "Internal error: Semantic types should have been desugared prior to type-checking"
 
 {-| This corresponds to the judgment:
 
@@ -784,6 +788,8 @@ instantiateTypeL a _A0 = do
             instLSolve (Monotype.VariableType name)
         Type.Scalar{..} -> do
             instLSolve (Monotype.Scalar scalar)
+        Type.Semantic{} ->
+          error "Internal error: Semantic should have been desugared earlier"
 
         -- InstLExt
         Type.Exists{ domain = Domain.Type, .. } -> do
@@ -938,6 +944,8 @@ instantiateTypeR _A0 a = do
             instRSolve (Monotype.VariableType name)
         Type.Scalar{..} -> do
             instRSolve (Monotype.Scalar scalar)
+        Type.Semantic{} ->
+          error "Internal error: Semantic should have been desugared earlier"
 
         -- InstRArr
         Type.Function{..} -> do
@@ -1936,6 +1944,15 @@ infer e0 = do
         Syntax.Builtin{ builtin = Syntax.NeuronSynapse, location } -> do
           return $ Type.synapseRecord location ~> Type.synapse location
 
+        Syntax.Builtin{ builtin = Syntax.TimeConstantInstantaneous, location } -> do
+          return $ Type.Scalar { scalar = Monotype.TimeConstant, .. }
+
+        Syntax.Builtin{ builtin = Syntax.TimeConstantLinearExp, location } -> do
+          return $ Type.linearExpRecord location ~> Type.Scalar { scalar = Monotype.TimeConstant, .. }
+
+        Syntax.Builtin{ builtin = Syntax.TimeConstantSigmoid, location } -> do
+          return $ Type.vSigmoidRecord location ~> Type.Scalar { scalar = Monotype.TimeConstant, .. }
+
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do
             return
                 (   Type.Scalar{ scalar = Monotype.Text, .. }
@@ -2193,7 +2210,7 @@ typeWith context syntax = do
 
     (_A, Status{ context = _Δ }) <- State.runStateT (infer syntax) initialStatus
 
-    return (Context.complete _Δ _A)
+    return $ (Context.complete _Δ _A)
 
 -- | A data type holding all errors related to type inference
 data TypeInferenceError
