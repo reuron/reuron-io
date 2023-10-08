@@ -390,19 +390,7 @@ apply
     (Value.Builtin NaturalToInteger)
     (Value.Scalar (Natural n)) = Value.Scalar (Integer (fromIntegral n))
 apply
-    (Value.Builtin NeuronIonLevels) ionsRecord
-     = ionsRecord
-apply
-    (Value.Builtin NeuronGating) gatingRecord
-     = gatingRecord
--- apply (Value.Alternative "Sigmoid") fields =
---   fields
--- apply (Value.Alternative "LinearExp") fields =
---   fields
--- apply (Value.Alternative "Instantaneous") fields =
---   fields
-apply
-    (Value.Builtin NeuronChannel)
+    (Value.Builtin Channel)
     (Value.Record
       (List.sortBy (Ord.comparing fst) . HashMap.toList ->
         [("activation", activation)
@@ -411,7 +399,7 @@ apply
         ]
       )
     )
-     = Value.NeuronChannel $ Value.Record (HashMap.fromList
+     = Value.Channel $ Value.Record (HashMap.fromList
                      [("ion_selectivity", ions)
                      ,("activation", convertActivation activation)
                      ,("inactivation", convertActivation inactivation)])
@@ -437,10 +425,10 @@ apply
     convertTimeConstant x = error $ "Encountered invalid timeConstant: " ++ show x
 
 apply
-    (Value.Builtin NeuronChannel)
-    x = error $ "applying Neuron/channel to " ++ show x
+    (Value.Builtin Channel)
+    x = error $ "applying Channel to " ++ show x
 apply
-    (Value.Builtin NeuronMembrane)
+    (Value.Builtin Membrane)
     (Value.Record
       (List.sortBy (Ord.comparing fst) . HashMap.toList ->
        [("capacitance_farads_per_square_cm", capacitance)
@@ -461,11 +449,11 @@ apply
                            ])) = Value.Record
                                  [("channel", channel)
                                  ,("siemens_per_square_cm", conductance)]
-          handleMembraneChannel x = error $ "Encountered unexpected membraneChanne: " ++ show x
-apply (Value.Builtin NeuronMembrane) x = error $ "Encountered unexpected NeuronMembrane: " ++ show x
+          handleMembraneChannel x = error $ "Encountered unexpected membraneChannel: " ++ show x
+apply (Value.Builtin Membrane) x = error $ "Encountered unexpected Membrane: " ++ show x
 
 apply
-  (Value.Builtin NeuronNeuron)
+  (Value.Builtin Neuron)
   (Value.Record
     (List.sortBy (Ord.comparing fst) . HashMap.toList ->
       [("membranes", membranes)
@@ -475,17 +463,17 @@ apply
   ) = Value.Record (HashMap.fromList
       [("membranes", membranes)
       ,("segments", segments)])
-apply (Value.Builtin NeuronNeuron) x = error (show x) -- TODO
+apply (Value.Builtin Neuron) x = error (show x) -- TODO
 
 apply
-  (Value.Builtin NeuronStimulator)
+  (Value.Builtin Stimulator)
   (Value.Record
     (List.sortBy (Ord.comparing fst) . HashMap.toList ->
       [("current_shape", currentShape)
       ,("envelope", envelope)
       ]
     )
-  ) = Value.NeuronStimulator $ Value.Record (HashMap.fromList
+  ) = Value.Stimulator $ Value.Record (HashMap.fromList
                                              [("current_shape", convertCurrentShape currentShape)
                                              ,("envelope", envelope)
                                              ])
@@ -497,13 +485,13 @@ apply
         isAlt :: Text.Text -> Bool
         isAlt alt = alt == "SquareWave" || alt == "LinearRamp" || alt == "FrequencyRamp"
 
-apply (Value.Builtin NeuronStimulator) x = error (show x) -- TODO
+apply (Value.Builtin Stimulator) x = error (show x) -- TODO
 
-apply (Value.Builtin NeuronScene)
+apply (Value.Builtin Scene)
   (Value.Record
   (List.sortBy (Ord.comparing fst) . HashMap.toList ->
    [("neurons", neurons), ("synapses", synapses)])) =
-  Value.NeuronScene $ Value.Record (HashMap.fromList
+  Value.Scene $ Value.Record (HashMap.fromList
                                     [ ("neurons", convertNeurons neurons)
                                     , ("synapses", synapses)
                                     ])
@@ -523,10 +511,10 @@ apply (Value.Builtin NeuronScene)
                     ])
     convertNeuronAndStimulator (Value.Record r) = error $ show $ HashMap.keys r
     convertNeuronAndStimulator x = error (show x)
-apply (Value.Builtin NeuronScene) (Value.Record x) = error $ show $ HashMap.keys x
-apply (Value.Builtin NeuronScene) x = error (show x)
+apply (Value.Builtin Scene) (Value.Record x) = error $ show $ HashMap.keys x
+apply (Value.Builtin Scene) x = error (show x)
 
-apply (Value.Builtin NeuronSynapse)
+apply (Value.Builtin Synapse)
   (Value.Record
   (List.sortBy (Ord.comparing fst) . HashMap.toList ->
    [("post_neuron", postNeuron)
@@ -534,7 +522,7 @@ apply (Value.Builtin NeuronSynapse)
    ,("pre_neuron", preNeuron)
    ,("pre_segment", preSegment)
    ,("synapse_membranes", synapseMembranes)
-   ])) = Value.NeuronSynapse $ Value.Record
+   ])) = Value.Synapse $ Value.Record
   (HashMap.fromList
     [("pre_neuron", preNeuron)
     ,("pre_segment", preSegment)
@@ -616,7 +604,7 @@ apply (Value.Builtin NeuronSynapse)
     convertTransmitter (Value.Application (Value.Alternative altName) _ ) =
       Value.Scalar (Text altName)
     convertTransmitter x = error (show x)
-apply (Value.Builtin NeuronSynapse) x = error (show x)
+apply (Value.Builtin Synapse) x = error (show x)
 
 
 apply (Value.Builtin IntegerEven) (Value.Scalar x)
@@ -790,17 +778,17 @@ quote names value =
 
         Value.Builtin builtin ->
             Syntax.Builtin{..}
-        Value.NeuronChannel inner ->
+        Value.Channel inner ->
             quote names inner
-        Value.NeuronMembrane inner ->
+        Value.Membrane inner ->
             quote names inner
-        Value.NeuronNeuron inner ->
+        Value.Neuron inner ->
             quote names inner
-        Value.NeuronStimulator inner ->
+        Value.Stimulator inner ->
             quote names inner
-        Value.NeuronScene inner ->
+        Value.Scene inner ->
             quote names inner
-        Value.NeuronSynapse inner ->
+        Value.Synapse inner ->
             quote names inner
   where
     location = ()

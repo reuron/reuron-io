@@ -1904,36 +1904,22 @@ infer e0 = do
                      ~> Type.Scalar { scalar = Monotype.Integer, .. }
                    )
 
-        Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, location } -> do
-          return $ Type.ionsRecord location ~> Type.json location
-
-        -- TODO: Remove this and the Neuron/gating builtin. Neuron/channel is enough.
-        Syntax.Builtin{ builtin = Syntax.NeuronGating, location } -> do
-          let argument = Type.Record {
-                fields = Type.Fields
-                  [("gates", Type.natural location)
-                  ,("activation",   Type.Optional { type_ = Type.gatingRecord location, .. })
-                  ,("inactivation", Type.Optional { type_ = Type.gatingRecord location, .. })
-                  ] Monotype.EmptyFields
-                , ..}
-          return $ argument ~> Type.json location
-
-        Syntax.Builtin{ builtin = Syntax.NeuronChannel, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Channel, location } -> do
           return $ Type.channelRecord location ~> Type.channel location
 
-        Syntax.Builtin{ builtin = Syntax.NeuronMembrane, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Membrane, location } -> do
           return $ Type.membraneRecord location ~> Type.membrane location
 
-        Syntax.Builtin{ builtin = Syntax.NeuronNeuron, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Neuron, location } -> do
           return $ Type.neuronRecord location ~> Type.neuron location
 
-        Syntax.Builtin{ builtin = Syntax.NeuronStimulator, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Stimulator, location } -> do
           return $ Type.stimulatorRecord location ~> Type.stimulator location
 
-        Syntax.Builtin{ builtin = Syntax.NeuronScene, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Scene, location } -> do
           return $ Type.sceneRecord location ~> Type.scene location
 
-        Syntax.Builtin{ builtin = Syntax.NeuronSynapse, location } -> do
+        Syntax.Builtin{ builtin = Syntax.Synapse, location } -> do
           return $ Type.synapseRecord location ~> Type.synapse location
 
         Syntax.Builtin{ builtin = Syntax.TextEqual, .. } -> do

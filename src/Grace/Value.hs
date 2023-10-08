@@ -96,12 +96,12 @@ data Value
     | Builtin Builtin
     | Scalar Scalar
     | Operator Value Operator Value
-    | NeuronChannel Value
-    | NeuronMembrane Value
-    | NeuronNeuron Value
-    | NeuronStimulator Value
-    | NeuronScene Value
-    | NeuronSynapse Value
+    | Channel Value
+    | Membrane Value
+    | Neuron Value
+    | Stimulator Value
+    | Scene Value
+    | Synapse Value
     deriving stock (Eq, Show)
 
 instance IsString Value where
