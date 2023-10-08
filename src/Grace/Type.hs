@@ -1126,10 +1126,10 @@ channel :: loc -> Type loc
 channel location = Scalar { scalar = Monotype.NeuronChannel, .. }
 
 membrane :: loc -> Type loc
-membrane location = Scalar {  scalar = Monotype.NeuronMembrane, ..  }
+membrane location = Scalar {  scalar = Monotype.Membrane, ..  }
 
 neuron :: loc -> Type loc
-neuron location = Scalar {  scalar = Monotype.NeuronNeuron, ..  }
+neuron location = Scalar {  scalar = Monotype.Neuron, ..  }
 
 stimulator :: loc -> Type loc
 stimulator location = Scalar {  scalar = Monotype.NeuronStimulator, ..  }

@@ -80,8 +80,8 @@ data Scalar
     --
     -- >>> pretty NeuronChannel
     -- Channel
-    | NeuronMembrane
-    | NeuronNeuron
+    | Membrane
+    | Neuron
     | NeuronSynapse
     | NeuronStimulator
     | NeuronScene
@@ -95,8 +95,8 @@ instance Pretty Scalar where
     pretty Integer = builtin "Integer"
     pretty Text    = builtin "Text"
     pretty NeuronChannel = builtin "Channel"
-    pretty NeuronMembrane = builtin "Membrane"
-    pretty NeuronNeuron = builtin "Neuron"
+    pretty Membrane = builtin "Membrane"
+    pretty Neuron = builtin "Neuron"
     pretty NeuronStimulator = builtin "Stimulator"
     pretty NeuronScene = builtin "Scene"
     pretty NeuronSynapse = builtin "Synapse"

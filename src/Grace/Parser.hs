@@ -209,14 +209,9 @@ render t = case t of
     Lexer.NaturalMod       -> "Natural/mod"
     Lexer.NaturalToInteger -> "Natural/toInteger"
     Lexer.Neuron           -> "Neuron"
-    Lexer.NeuronIonLevels  -> "Neuron/ions"
-    Lexer.NeuronGating     -> "Neuron/gating"
-    Lexer.NeuronChannel    -> "Neuron/channel"
-    Lexer.NeuronMembrane   -> "Neuron/membrane"
-    Lexer.NeuronNeuron     -> "Neuron/neuron"
-    Lexer.NeuronStimulator -> "Neuron/stimulator"
-    Lexer.NeuronScene      -> "Neuron/scene"
-    Lexer.NeuronSynapse    -> "Neuron/synapse"
+    Lexer.Stimulator -> "Stimulator"
+    Lexer.Scene      -> "Scene"
+    Lexer.Synapse    -> "Synapse"
     Lexer.Null             -> "null"
     Lexer.OpenAngle        -> "<"
     Lexer.OpenBrace        -> "{"
@@ -225,9 +220,6 @@ render t = case t of
     Lexer.Optional         -> "List"
     Lexer.Or               -> "||"
     Lexer.Plus             -> "+"
-    Lexer.Scene            -> "Scene"
-    Lexer.Stimulator       -> "Stimulator"
-    Lexer.Synapse          -> "Synapse"
     Lexer.Text             -> "Text"
     Lexer.TextEqual        -> "Text/equal"
     Lexer.TextLiteral _    -> "a text literal"
@@ -502,37 +494,29 @@ grammar = mdo
 
                 return Syntax.Builtin{ builtin = Syntax.NaturalToInteger, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronIonLevels
+        <|> do  location <- locatedToken Lexer.Channel
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronIonLevels, .. }
+                return Syntax.Builtin{ builtin = Syntax.Channel, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronGating
+        <|> do  location <- locatedToken Lexer.Membrane
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronGating, .. }
+                return Syntax.Builtin{ builtin = Syntax.Membrane, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronChannel
+        <|> do  location <- locatedToken Lexer.Neuron
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronChannel, .. }
+                return Syntax.Builtin{ builtin = Syntax.Neuron, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronMembrane
+        <|> do  location <- locatedToken Lexer.Stimulator
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronMembrane, .. }
+                return Syntax.Builtin{ builtin = Syntax.Stimulator, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronNeuron
+        <|> do  location <- locatedToken Lexer.Scene
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronNeuron, .. }
+                return Syntax.Builtin{ builtin = Syntax.Scene, .. }
 
-        <|> do  location <- locatedToken Lexer.NeuronStimulator
+        <|> do  location <- locatedToken Lexer.Synapse
 
-                return Syntax.Builtin{ builtin = Syntax.NeuronStimulator, .. }
-
-        <|> do  location <- locatedToken Lexer.NeuronScene
-
-                return Syntax.Builtin{ builtin = Syntax.NeuronScene, .. }
-
-        <|> do  location <- locatedToken Lexer.NeuronSynapse
-
-                return Syntax.Builtin{ builtin = Syntax.NeuronSynapse, .. }
+                return Syntax.Builtin{ builtin = Syntax.Synapse, .. }
 
         <|> do  location <- locatedToken Lexer.TextEqual
 
@@ -652,9 +636,9 @@ grammar = mdo
         <|> do  location <- locatedToken Lexer.Channel
                 return Type.Scalar{ scalar = Monotype.NeuronChannel, .. }
         <|> do  location <- locatedToken Lexer.Neuron
-                return Type.Scalar{ scalar = Monotype.NeuronNeuron, .. }
+                return Type.Scalar{ scalar = Monotype.Neuron, .. }
         <|> do  location <- locatedToken Lexer.Membrane
-                return Type.Scalar{ scalar = Monotype.NeuronMembrane, .. }
+                return Type.Scalar{ scalar = Monotype.Membrane, .. }
         <|> do  location <- locatedToken Lexer.Scene
                 return Type.Scalar{ scalar = Monotype.NeuronScene, .. }
         <|> do  location <- locatedToken Lexer.Synapse

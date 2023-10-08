@@ -131,14 +131,12 @@ parseToken =
             , NaturalEqual    <$ symbol "Natural/equal"
             , NaturalMod    <$ symbol "Natural/mod"
             , NaturalToInteger <$ symbol "Natural/toInteger"
-            , NeuronIonLevels <$ symbol "Neuron/ions"
-            , NeuronGating <$ symbol "Neuron/gating"
-            , NeuronChannel <$ symbol "Neuron/channel"
-            , NeuronMembrane <$ symbol "Neuron/membrane"
-            , NeuronNeuron <$ symbol "Neuron/neuron"
-            , NeuronStimulator <$ symbol "Neuron/stimulator"
-            , NeuronScene <$ symbol "Neuron/scene"
-            , NeuronSynapse <$ symbol "Neuron/synapse"
+            , Channel <$ symbol "Channel"
+            , Membrane <$ symbol "Membrane"
+            , Neuron <$ symbol "Neuron"
+            , Stimulator <$ symbol "Stimulator"
+            , Scene <$ symbol "Scene"
+            , Synapse <$ symbol "Synapse"
             , TextEqual      <$ symbol "Text/equal"
             , False_         <$ symbol "false"
             , True_          <$ symbol "true"
@@ -524,14 +522,9 @@ data Token
     | NaturalMod
     | NaturalToInteger
     | Neuron
-    | NeuronIonLevels
-    | NeuronGating
-    | NeuronChannel
-    | NeuronMembrane
-    | NeuronNeuron
-    | NeuronStimulator
-    | NeuronScene
-    | NeuronSynapse
+    | Stimulator
+    | Scene
+    | Synapse
     | Null
     | OpenAngle
     | OpenBrace
@@ -540,9 +533,6 @@ data Token
     | Optional
     | Or
     | Plus
-    | Scene
-    | Stimulator
-    | Synapse
     | Text
     | TextEqual
     | TextLiteral Text

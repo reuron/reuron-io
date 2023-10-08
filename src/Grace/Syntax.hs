@@ -399,38 +399,30 @@ data Builtin
     -- ^
     --   >>> pretty NaturalToInteger
     --   Natural/toInteger
-    | NeuronIonLevels
+    | Channel
     -- ^
-    --   >>> pretty NeuronIonLevels
-    --   Neuron/ions
-    | NeuronGating
+    --   >>> pretty Channel
+    --   Channel
+    | Membrane
     -- ^
-    --   >>> pretty NeuronGating
-    --   Neuron/gating
-    | NeuronChannel
+    --   >>> pretty Membrane
+    --   Membrane
+    | Neuron
     -- ^
-    --   >>> pretty NeuronChannel
-    --   Neuron/channel
-    | NeuronMembrane
+    --   >>> pretty Neuron
+    --   Neuron
+    | Stimulator
     -- ^
-    --   >>> pretty NeuronMembrane
-    --   Neuron/membrane
-    | NeuronNeuron
+    --   >>> pretty Stimulator
+    --   Stimulator
+    | Scene
     -- ^
-    --   >>> pretty NeuronNeuron
-    --   Neuron/neuron
-    | NeuronStimulator
+    --   >>> pretty Scene
+    --   Scene
+    | Synapse
     -- ^
-    --   >>> pretty NeuronStimulator
-    --   Neuron/stimulator
-    | NeuronScene
-    -- ^
-    --   >>> pretty NeuronScene
-    --   Neuron/scene
-    | NeuronSynapse
-    -- ^
-    --   >>> pretty NeuronSynapse
-    --   Neuron/synapse
+    --   >>> pretty Synapse
+    --   Synapse
     | TextEqual
     -- ^
     --   >>> pretty TextEqual
@@ -465,14 +457,12 @@ instance Pretty Builtin where
     pretty NaturalEqual    = Pretty.builtin "Natural/equal"
     pretty NaturalMod      = Pretty.builtin "Natural/mod"
     pretty NaturalToInteger = Pretty.builtin "Natural/toInteger"
-    pretty NeuronIonLevels = Pretty.builtin "Neuron/ions"
-    pretty NeuronGating = Pretty.builtin "Neuron/gating"
-    pretty NeuronChannel = Pretty.builtin "Neuron/channel"
-    pretty NeuronMembrane = Pretty.builtin "Neuron/membrane"
-    pretty NeuronNeuron = Pretty.builtin "Neuron/neuron"
-    pretty NeuronStimulator = Pretty.builtin "Neuron/stimulator"
-    pretty NeuronScene = Pretty.builtin "Neuron/scene"
-    pretty NeuronSynapse = Pretty.builtin "Neuron/synapse"
+    pretty Channel = Pretty.builtin "Channel"
+    pretty Membrane = Pretty.builtin "Membrane"
+    pretty Neuron = Pretty.builtin "Neuron"
+    pretty Stimulator = Pretty.builtin "Stimulator"
+    pretty Scene = Pretty.builtin "Scene"
+    pretty Synapse = Pretty.builtin "Synapse"
 
     pretty TextEqual      = Pretty.builtin "Text/equal"
 
